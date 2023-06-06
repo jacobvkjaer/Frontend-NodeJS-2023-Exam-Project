@@ -2,7 +2,7 @@
   import { navigate } from "svelte-navigator";
   import { BASE_URL } from "../../stores/urls.js";
   import { user } from "../../stores/user.js";
-  import { Button, TextInput } from "carbon-components-svelte";
+  import { Button, TextInput, PasswordInput } from "carbon-components-svelte";
   import { Email, Password, Login } from "carbon-icons-svelte";
   import toastr, { toastrSetup } from "../../utils/toaster/toastr.js";
   import ResetPassword from "../../components/ResetPassword/ResetPassword.svelte";
@@ -27,8 +27,8 @@
           headers: {
               "Content-Type": "application/json"
             },
-            body: userCredentials,
-            credentials: "include"
+          body: userCredentials,
+          credentials: "include"
       });
       
       if (!response.ok) {
@@ -40,11 +40,21 @@
       }
 
       const data = await response.json();
-      console.log("data: " + data);
+      console.log(data.message);
+      console.log(data.user.id);
+      console.log(data.user.role);
+      console.log(data.user.email);
+      console.log(data.user.username);
       
-      if (data.email === email) {
-          let authenticatedEmail = data.email;
-          user.set(authenticatedEmail);
+      if (data.user.email === email) {
+        const userData = {
+          id: data.user.id,
+          role: data.user.role,
+          username: data.user.username,
+          email: data.user.email
+        };
+
+        user.set(userData);
     
           toastr.success(`You've signed in successfully.`);
           setTimeout(() => {
@@ -87,7 +97,7 @@
           <div class="icon">
             <Password size={20}/>
           </div>
-          <TextInput 
+          <PasswordInput 
             bind:value={password} 
             type="password" 
             placeholder="Password"

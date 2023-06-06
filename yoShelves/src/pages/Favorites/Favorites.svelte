@@ -10,7 +10,7 @@
     async function fetchBooks() {
         
         const baseUrl = get(BASE_URL); 
-        const bookURL = baseUrl + "/books/search/title-or-author/Animal Farm";
+        const bookURL = baseUrl + "/books/search/title-or-author/1984";
 
         try {
             const response = await fetch(bookURL, {
@@ -43,7 +43,7 @@
   <Grid fullWidth>
     <Row noGutter>
       <Column class="header-column" sm={1} md={4} lg={8} xlg={14} max={16}>
-        <h1>Books</h1>
+        <h1>Favorites</h1>
       </Column>
     </Row>
   {#if books.length}
