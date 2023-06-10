@@ -152,8 +152,8 @@
           events = [...events, { type: "select", ...e.detail }];
           console.log(e.detail.selectedResult);
           if (e.detail.selectedResult) {
-            console.log(e.detail.selectedResult);
-            console.log(e.detail.selectedResult.href);
+            console.log("base: " + e.detail.selectedResult);
+            console.log("base + href: " + e.detail.selectedResult.href);
             navigate(e.detail.selectedResult.href);
           }
         }}

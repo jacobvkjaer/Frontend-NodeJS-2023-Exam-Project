@@ -4,12 +4,12 @@
     import { user } from "../../stores/user.js";
     import { onMount, afterUpdate } from "svelte";
     import { Grid, Row, Column, ImageLoader } from "carbon-components-svelte";
-    import { fetchBook1 } from "../../utils/books/fetchBook.js";
+    import { fetchBook1, fetchBook2, fetchBook3, fetchBook4 } from "../../utils/books/fetchBook.js";
     import BookHeader from "../../components/Books/BookHeader.svelte";
     import BookImage from "../../components/Books/BookImage.svelte";
     import BookDetails from "../../components/Books/BookDetails.svelte";
     import FavoriteBook from "../../components/Favorites/FavoriteBook.svelte";
-  import { StarFilled } from "carbon-icons-svelte";
+  import { Star, StarFilled, StarHalf } from "carbon-icons-svelte";
   import ReviewBook from "../../components/Reviews/ReviewBook.svelte";
 
     let userId;
@@ -21,7 +21,7 @@
     });
 
     onMount(async () => {
-      book = await fetchBook1();
+      book = await fetchBook4();
       console.log("book1:" + JSON.stringify(book, null, 3));
     });
 
@@ -62,8 +62,14 @@
                       <Column class="title-row-column-1" sm={1} md={4} lg={4} xlg={4} max={16}>
                         <div class=aligner>
                           <h3>Rating - </h3>
-                          {#each Array(book.rating).fill() as _}
+                          {#each Array(Math.floor(book.rating)).fill() as _}
                             <h4><StarFilled size={20}/></h4>
+                          {/each}
+                          {#if book.rating % 1 >= 0.5}
+                            <h4><StarHalf size={20}/></h4>
+                          {/if}
+                          {#each Array(5 - Math.ceil(book.rating)).fill() as _}
+                            <h4><Star size={20}/></h4>
                           {/each}
                         </div>
                       </Column>
