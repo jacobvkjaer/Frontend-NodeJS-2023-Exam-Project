@@ -14,7 +14,7 @@
   let navigate = useNavigate();
 
   const handleNavigation = () => {
-    if ($user?.id && $location?.pathname !== '/') {
+    if ($user?user.id && $location?.pathname !== '/') {
       console.log('Saving location', $location.pathname);
       window.localStorage.setItem('savedLocation', $location.pathname);
     }
@@ -23,7 +23,7 @@
   onMount(() => {
     const savedLocation = window.localStorage.getItem('savedLocation');
     console.log('Saved location', savedLocation);
-    if ($user?.id) {
+    if ($user?user.id) {
       if (savedLocation && savedLocation !== '/') {
         console.log('Navigating to saved location');
         navigate(savedLocation, { replace: true });
@@ -36,12 +36,13 @@
       navigate('/', { replace: true });
     }
   });
+  
 </script>
 
 <Router on:navigate={handleNavigation}>
   <main>
     <Route path="/">
-      {#if $user?.id}
+      {#if $user.user.id}
         <Route path="/home" component={Home} />
         <svelte:component this={Home} />
       {:else}

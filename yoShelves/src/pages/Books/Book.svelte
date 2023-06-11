@@ -14,7 +14,7 @@
 
     let userId;
     let book = null;
-    // export let title = ""; // title is a prop passed from parent component
+    export let title;
 
     const unsubscribe = user.subscribe(($user) => {
       userId = $user?.user?.id;

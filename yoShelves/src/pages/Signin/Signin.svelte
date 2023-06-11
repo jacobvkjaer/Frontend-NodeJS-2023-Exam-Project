@@ -46,21 +46,21 @@
       console.log(data.user.email);
       console.log(data.user.username);
       
-      if (data.user.email === email) {
-        const userData = {
-          id: data.user.id,
-          role: data.user.role,
-          username: data.user.username,
-          email: data.user.email
-        };
+      
+      const userData = {
+        id: data.user.id,
+        role: data.user.role,
+        username: data.user.username,
+        email: data.user.email
+      };
 
-        user.set(userData);
-    
-          toastr.success(`You've signed in successfully.`);
-          setTimeout(() => {
-              navigate("/home", { replace: true });
-          }, 0)
-      }
+      user.set(userData);
+  
+      toastr.success(`You've signed in successfully.`);
+      setTimeout(() => {
+          navigate("/home", { replace: true });
+      }, 0)
+      
       
       email = "";
       password = "";
