@@ -1,93 +1,80 @@
 <script>
-  import { navigate } from "svelte-navigator";
-  import { BASE_URL } from "../../stores/urls.js";
-  import { user } from "../../stores/user.js";
-  import { Button, TextInput, PasswordInput } from "carbon-components-svelte";
-  import { Email, Password, Login } from "carbon-icons-svelte";
-  import toastr, { toastrSetup } from "../../utils/toaster/toastr.js";
-  import ResetPassword from "../../components/ResetPassword/ResetPassword.svelte";
-
+  import { navigate } from 'svelte-navigator';
+  import { BASE_URL } from '../../stores/urls.js';
+  import { user } from '../../stores/user.js';
+  import { Button, TextInput, PasswordInput } from 'carbon-components-svelte';
+  import { Email, Password, Login } from 'carbon-icons-svelte';
+  import toastr, { toastrSetup } from '../../utils/toaster/toastr.js';
+  import ForgotPassword from '../../components/ForgotPassword/ForgotPassword.svelte';
 
   toastrSetup();
 
-  let email = "";
-  let password = "";
-
+  let email = '';
+  let password = '';
 
   async function handleLogin() {
     console.log(email, password);
-    const userCredentials = JSON.stringify({email, password});
+    const userCredentials = JSON.stringify({ email, password });
     console.log(userCredentials);
-    const signinURL = $BASE_URL + "/auth/signin";
+    const signinURL = $BASE_URL + '/auth/signin';
 
     try {
       console.log(`1`);
       const response = await fetch(signinURL, {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-            },
-          body: userCredentials,
-          credentials: "include"
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: userCredentials,
+        credentials: 'include',
       });
-      
-      if (!response.ok) {
-        if(response.status === 400) {
-          throw new Error("Wrong email or password. Please try again.");
-        } else {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-      }
 
       const data = await response.json();
-      console.log(data.message);
-      console.log(data.user.id);
-      console.log(data.user.role);
-      console.log(data.user.email);
-      console.log(data.user.username);
-      
-      
-      const userData = {
-        id: data.user.id,
-        role: data.user.role,
-        username: data.user.username,
-        email: data.user.email
-      };
 
-      user.set(userData);
-  
-      toastr.success(`You've signed in successfully.`);
-      setTimeout(() => {
-          navigate("/home", { replace: true });
-      }, 0)
-      
-      
-      email = "";
-      password = "";
-
+      if (response.ok) {
+        if (data.message) {
+          const userData = {
+            id: data.user.id,
+            role: data.user.role,
+            username: data.user.username,
+            email: data.user.email,
+          };
+          user.set(userData);
+          toastr.success(`${data.message}`);
+          setTimeout(() => {
+            navigate('/home', { replace: true });
+          }, 0);
+        }
+      } else {
+        // Handle the error response
+        let errorMsg = data.message || `HTTP error! status: ${response.status}`;
+        throw new Error(errorMsg);
+      }
     } catch (error) {
-      console.error('An error occurred:', error);
       toastr.error(error.message);
+      let email = '';
+      let password = '';
     }
-  };
-
-
+  }
 </script>
 
 <div class="flex-center">
   <div class="outer">
     <h1>Signin</h1>
     <form on:submit|preventDefault={handleLogin}>
-      <div class="inner" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div
+        class="inner"
+        style="display: flex; flex-direction: column; gap: 1rem;"
+      >
         <div class="line">
           <div class="icon">
-            <Email size={20}/>
+            <Email size={20} />
           </div>
-          <TextInput 
-            bind:value={email} 
-            type="email"  
+          <TextInput
+            bind:value={email}
+            type="email"
             placeholder="Email"
-            name="email" 
+            name="email"
             labelText="Email address"
             required={true}
           />
@@ -95,11 +82,11 @@
 
         <div class="line">
           <div class="icon">
-            <Password size={20}/>
+            <Password size={20} />
           </div>
-          <PasswordInput 
-            bind:value={password} 
-            type="password" 
+          <PasswordInput
+            bind:value={password}
+            type="password"
             placeholder="Password"
             name="password"
             labelText="Password"
@@ -107,13 +94,11 @@
           />
         </div>
 
-        <ResetPassword/>
-
+        <ForgotPassword />
       </div>
-      <div class=button>
+      <div class="button">
         <Button type="submit" icon={Login}>Signin</Button>
       </div>
-      
     </form>
   </div>
 </div>
@@ -127,16 +112,17 @@
     width: 100%;
   }
 
-  .outer, form {
+  .outer,
+  form {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  
+
   h1 {
     margin-bottom: 1em;
   }
-  
+
   .button {
     margin-top: 4em;
   }

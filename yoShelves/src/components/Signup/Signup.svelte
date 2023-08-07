@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { navigate } from 'svelte-navigator';
   import { BASE_URL } from '../../stores/urls.js';
   import {
@@ -10,68 +9,42 @@
     ModalBody,
     ModalFooter,
   } from 'carbon-components-svelte';
-  import { Password, Renew } from 'carbon-icons-svelte';
-  import Signup from '../Signup/Signup.svelte';
+  import { User, Email, Password, CheckmarkOutline } from 'carbon-icons-svelte';
 
   import toastr, { toastrSetup } from '../../utils/toaster/toastr.js';
   toastrSetup();
 
-  export let token;
-  export let email;
-  let tokenValid = false;
-  let password1 = '';
-  let password2 = '';
-  let passwordsMatch = false;
+  let email = '';
+  let username = '';
+  let password = '';
+  let isModalOpen = false;
 
-  $: passwordsMatch = password1 === password2 && password1.trim() !== '';
-
-  // let isModalOpen = false;
-
-  onMount(async () => {
-    const resetURL = `${$BASE_URL}/auth/reset/${token}?email=${encodeURIComponent(
-      email
-    )}`;
-    console.log(resetURL);
-    try {
-      console.log('In the onMount of ResetPassword.svelte');
-      const response = await fetch(resetURL, {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const data = await response.json();
-      console.log(data);
-
-      if (response.ok) {
-        if (data.message) {
-          tokenValid = true;
-          toastr.info(`${data.message}`);
-        }
-      } else {
-        let errorMsg = data.message || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMsg);
+  $: if (isModalOpen) {
+    setTimeout(() => {
+      const inputWrapper = document.getElementById('email-input-wrapper');
+      if (inputWrapper) {
+        const inputElement = inputWrapper.querySelector('input');
+        if (inputElement) inputElement.focus();
       }
-    } catch (error) {
-      toastr.error(error.message);
-      setTimeout(() => {
-        navigate('/', { replace: true });
-      }, 2000);
-    }
-  });
+    }, 0);
+  }
 
-  async function handleReset(e) {
+  const openModal = () => {
+    isModalOpen = true;
+  };
+
+  const closeModal = () => {
+    isModalOpen = false;
+  };
+
+  async function handleSignup(e) {
     e.preventDefault();
 
-    const userCredential = JSON.stringify({ password: password1 });
-    console.log('Sending reset request with data:', userCredential);
-    console.log($BASE_URL);
-    const resetURL = `${$BASE_URL}/auth/reset/${token}/confirm?email=${encodeURIComponent(
-      email
-    )}`;
-    console.log(resetURL);
-    console.log(encodeURIComponent(email));
+    const userCredential = JSON.stringify({ username, email, password });
+    const signupURL = $BASE_URL + '/auth/signup';
 
     try {
-      const response = await fetch(resetURL, {
+      const response = await fetch(signupURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,14 +57,18 @@
       console.log('data: ' + data.message);
 
       if (response.ok) {
+        // Check for the message property being returned
         if (data.message) {
           toastr.success(`${data.message}`);
+          closeModal();
           setTimeout(() => {
             navigate('/', { replace: true });
           }, 2000);
         }
-        password1 = '';
-        password2 = '';
+        closeModal();
+        username = '';
+        email = '';
+        password = '';
       } else {
         // Handle the error response
         let errorMsg = data.message || `HTTP error! status: ${response.status}`;
@@ -99,31 +76,50 @@
       }
     } catch (error) {
       toastr.error(error.message);
-      password1 = '';
-      password2 = '';
+      username = '';
+      email = '';
+      password = '';
     }
   }
 </script>
 
-{#if tokenValid}
+<Button kind="ghost" on:click={openModal} class="signup-button">Signup?</Button>
+
+{#if isModalOpen}
   <div class="composed-modal">
-    <ComposedModal size="sm" open>
+    <ComposedModal bind:open={isModalOpen} size="sm">
       <ModalHeader iconDescription="Close">
-        <h1>Reset Password</h1>
+        <h1>Signup</h1>
       </ModalHeader>
       <ModalBody>
-        <form on:submit|preventDefault={handleReset} class="modal-inner">
+        <form on:submit|preventDefault={handleSignup} class="modal-inner">
           <div class="modal-line">
             <div class="icon">
-              <Password size={20} />
+              <User size={20} />
             </div>
             <div class="input-wrapper">
               <TextInput
-                bind:value={password1}
-                type="password"
-                placeholder="Password"
-                name="password"
-                labelText="New password"
+                bind:value={username}
+                type="text"
+                placeholder="Username"
+                name="username"
+                labelText="Username"
+                required={true}
+                autofocus
+              />
+            </div>
+          </div>
+          <div class="modal-line">
+            <div class="icon">
+              <Email size={20} />
+            </div>
+            <div class="input-wrapper">
+              <TextInput
+                bind:value={email}
+                type="email"
+                placeholder="Email"
+                name="email"
+                labelText="Email address"
                 required={true}
                 autofocus
               />
@@ -135,11 +131,11 @@
             </div>
             <div class="input-wrapper">
               <TextInput
-                bind:value={password2}
+                bind:value={password}
                 type="password"
                 placeholder="Password"
                 name="password"
-                labelText="New password"
+                labelText="Password"
                 required={true}
                 autofocus
               />
@@ -147,37 +143,36 @@
           </div>
           <div class="modal-line">
             <div class="new2">
-              <Renew size={20} />
+              <CheckmarkOutline size={20} />
             </div>
             <Button
               size="field"
               kind="primary"
               type="submit"
               class="reset-button"
-              disabled={!passwordsMatch}
             >
               Reset
             </Button>
           </div>
         </form>
       </ModalBody>
+      <ModalFooter class="modal-footer">
+        <Button
+          size="small"
+          kind="secondary"
+          on:click={closeModal}
+          class="cancel-button"
+        >
+          Cancel
+        </Button>
+      </ModalFooter>
     </ComposedModal>
   </div>
-{:else}
-  <div>Loading...</div>
 {/if}
 
 <style>
   .input-wrapper {
     width: 100%;
-  }
-
-  .forgot-password-button {
-    /* color: blue;
-      text-decoration: none;
-      background-color: transparent;
-      border: none; */
-    /* padding: 0; */
   }
 
   .signup-button {
@@ -186,15 +181,25 @@
 
   h1 {
     font-size: 2.2em;
-    padding-left: 75px;
-    margin: 10px 0 12px 0;
+    padding-left: 136px;
+    margin: 20px 0 12px 0;
   }
 
   :global(.bx--modal-container.bx--modal-container--sm) {
     max-width: 400px;
     min-width: 150px;
-    max-height: 400px;
+    max-height: 600px !important;
+    min-height: 300px !important;
+  }
+
+  /* :global(.modal-inner.s-PYO7Oea7XOhk) {
+    max-height: 600px;
     min-height: 200px;
+  } */
+
+  :global(.bx--modal-content) {
+    max-height: 600px;
+    min-height: 100px;
   }
 
   .composed-modal {
@@ -248,10 +253,17 @@
     padding-left: 38%;
   }
 
+  :global(.modal-line.s-PYO7Oea7XOhk, .modal-line.s-Fpjlg_y_G6MH) {
+    padding-bottom: 1rem;
+  }
+
   .modal-header {
     margin: 1.2em auto 1em auto;
   }
 
+  .modal-inner {
+    margin-bottom: 1.2em;
+  }
   .modal-footer {
     display: flex;
     justify-content: flex-end;

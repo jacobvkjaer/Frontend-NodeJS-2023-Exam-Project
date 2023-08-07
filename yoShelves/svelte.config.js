@@ -1,4 +1,4 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte'
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 // import { optimizeImports } from "carbon-preprocess-svelte";
 
 export default {
@@ -6,4 +6,4 @@ export default {
   // for more information about preprocessors
   // preprocess: [optimizeImports()],
   preprocess: vitePreprocess(),
-}
+};

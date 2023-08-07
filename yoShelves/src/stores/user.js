@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
 const createUserStore = () => {
   const { subscribe, set, update } = writable({
@@ -7,29 +7,34 @@ const createUserStore = () => {
       id: null,
       role: null,
       username: null,
-      email: null
-    }
+      email: null,
+    },
   });
 
   const setUser = (user) => {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
     set({ isAuthenticated: true, user });
-  }
+  };
 
+  // Nullifying props of user object
   const clearUser = () => {
-    localStorage.removeItem('user');
-    set({ isAuthenticated: false, user: { id: null, role: null, username: null, email: null } });
-  }
+    localStorage.removeItem("user");
+    set({
+      isAuthenticated: false,
+      user: { id: null, role: null, username: null, email: null },
+    });
+  };
 
   return {
     subscribe,
     set: setUser,
     update,
     clearUser,
-    updateRole: (role) => update((state) => {
-      state.user.role = role;
-      return state;
-    })
+    updateRole: (role) =>
+      update((state) => {
+        state.user.role = role;
+        return state;
+      }),
   };
 };
 
