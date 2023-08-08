@@ -1,10 +1,11 @@
 <script>
-  import { get } from "svelte/store";
-  import { BASE_URL } from "../../stores/urls.js";
-  import { user } from "../../stores/user.js";
-  import { Link, useLocation, navigate } from "svelte-navigator";
-  import Signout from "../Signout/Signout.svelte";
-  import { onMount, onDestroy } from "svelte";
+  import { get } from 'svelte/store';
+  import { BASE_URL } from '../../stores/urls.js';
+  import { user } from '../../stores/user.js';
+  import { Link, useLocation, navigate } from 'svelte-navigator';
+  import Signout from '../Signout/Signout.svelte';
+  import DeleteUser from '../DeleteUser/DeleteUser.svelte';
+  import { onMount, onDestroy } from 'svelte';
   import {
     Header,
     HeaderUtilities,
@@ -14,7 +15,7 @@
     HeaderPanelDivider,
     HeaderPanelLink,
     HeaderSearch,
-  } from "carbon-components-svelte";
+  } from 'carbon-components-svelte';
   import {
     Login,
     Undo,
@@ -23,7 +24,7 @@
     UserAvatarFilledAlt,
     Home,
     CharacterSentenceCase,
-  } from "carbon-icons-svelte";
+  } from 'carbon-icons-svelte';
 
   let isSideNavOpen = true;
   let isOpen = false;
@@ -39,7 +40,7 @@
   let isAuthenticated;
 
   onMount(() => {
-    unsubscribe = user.subscribe((value) => {
+    unsubscribe = user.subscribe(value => {
       isAuthenticated = value.isAuthenticated;
     });
   });
@@ -64,11 +65,11 @@
 
     try {
       const response = await fetch(bookURL, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        credentials: "include",
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -79,7 +80,7 @@
       }
 
       const books = await response.json();
-      results = books.map((book) => ({
+      results = books.map(book => ({
         href: `/books/title/${encodeURIComponent(book.title)}`,
         text: book.title,
         description: book.author,
@@ -93,11 +94,11 @@
   }
 
   $: {
-    if ($location.pathname === "/signin") {
-      targetRoute = "/";
+    if ($location.pathname === '/signin') {
+      targetRoute = '/';
       icon = Undo;
     } else {
-      targetRoute = "/signin";
+      targetRoute = '/signin';
       icon = Login;
     }
   }
@@ -108,14 +109,14 @@
 
   let ref = null;
   let active = false;
-  let value = "";
+  let value = '';
   let selectedResultIndex = 0;
   let events = [];
 
   $: lowerCaseValue = value.toLowerCase();
   $: results =
     value.length > 0
-      ? data.filter((item) => {
+      ? data.filter(item => {
           return (
             item.text.toLowerCase().includes(lowerCaseValue) ||
             item.description.includes(lowerCaseValue)
@@ -137,27 +138,27 @@
           {results}
           on:input={handleInput}
           on:active={() => {
-            events = [...events, { type: "active" }];
+            events = [...events, { type: 'active' }];
           }}
           on:inactive={() => {
-            events = [...events, { type: "inactive" }];
+            events = [...events, { type: 'inactive' }];
           }}
           on:clear={() => {
-            events = [...events, { type: "clear" }];
+            events = [...events, { type: 'clear' }];
           }}
-          on:select={(e) => {
-            events = [...events, { type: "select", ...e.detail }];
+          on:select={e => {
+            events = [...events, { type: 'select', ...e.detail }];
             console.log(e.detail.selectedResult);
             if (e.detail.selectedResult) {
-              console.log("base: " + e.detail.selectedResult);
-              console.log("base + href: " + e.detail.selectedResult.href);
+              console.log('base: ' + e.detail.selectedResult);
+              console.log('base + href: ' + e.detail.selectedResult.href);
               navigate(e.detail.selectedResult.href);
             }
           }}
         />
         <Link to="/books1/title1/dragon">
           <div
-            class:selected={$location.pathname === "/books1/title1/dragon" &&
+            class:selected={$location.pathname === '/books1/title1/dragon' &&
               !isOpen}
           >
             <HeaderGlobalAction
@@ -167,17 +168,17 @@
           </div>
         </Link>
         <Link to="/favorites">
-          <div class:selected={$location.pathname === "/favorites" && !isOpen}>
+          <div class:selected={$location.pathname === '/favorites' && !isOpen}>
             <HeaderGlobalAction aria-label="Favorites" icon={Favorite} />
           </div>
         </Link>
         <Link to="/reviews">
-          <div class:selected={$location.pathname === "/reviews" && !isOpen}>
+          <div class:selected={$location.pathname === '/reviews' && !isOpen}>
             <HeaderGlobalAction aria-label="Reviews" icon={Review} />
           </div>
         </Link>
         <Link to="/home">
-          <div class:selected={$location.pathname === "/home" && !isOpen}>
+          <div class:selected={$location.pathname === '/home' && !isOpen}>
             <HeaderGlobalAction aria-label="Home" icon={Home} />
           </div>
         </Link>
@@ -192,6 +193,7 @@
               <HeaderPanelLink>Switcher item 1</HeaderPanelLink>
               <HeaderPanelDivider>Account</HeaderPanelDivider>
               <Signout on:signedout={() => (isOpen = false)} />
+              <DeleteUser on:userDeleted={() => (isOpen = false)} />
             </HeaderPanelLinks>
           </HeaderAction>
         </div>
@@ -227,7 +229,7 @@
     border: none; /* Removes border */
   }
 
-  :global([role="search"].active.svelte-13u0dam.svelte-13u0dam) {
+  :global([role='search'].active.svelte-13u0dam.svelte-13u0dam) {
     outline: none !important;
   }
 
@@ -237,7 +239,7 @@
 
   :global(
       .selected.svelte-13u0dam.svelte-13u0dam,
-      [role="menuitem"].svelte-13u0dam.svelte-13u0dam:hover
+      [role='menuitem'].svelte-13u0dam.svelte-13u0dam:hover
     ) {
     background-color: #c46200 !important;
   }

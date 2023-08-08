@@ -1,6 +1,6 @@
 <script>
-  import { navigate } from "svelte-navigator";
-  import { BASE_URL } from "../../stores/urls.js";
+  import { navigate } from 'svelte-navigator';
+  import { BASE_URL } from '../../stores/urls.js';
   import {
     Button,
     TextInput,
@@ -8,21 +8,21 @@
     ModalHeader,
     ModalBody,
     ModalFooter,
-  } from "carbon-components-svelte";
-  import { Email, Renew } from "carbon-icons-svelte";
-  import Signup from "../Signup/Signup.svelte";
+  } from 'carbon-components-svelte';
+  import { Email, Renew } from 'carbon-icons-svelte';
+  import Signup from '../Signup/Signup.svelte';
 
-  import toastr, { toastrSetup } from "../../utils/toaster/toastr.js";
+  import toastr, { toastrSetup } from '../../utils/toaster/toastr.js';
   toastrSetup();
 
-  let email = "";
+  let email = '';
   let isModalOpen = false;
 
   $: if (isModalOpen) {
     setTimeout(() => {
-      const inputWrapper = document.getElementById("email-input-wrapper");
+      const inputWrapper = document.getElementById('email-input-wrapper');
       if (inputWrapper) {
-        const inputElement = inputWrapper.querySelector("input");
+        const inputElement = inputWrapper.querySelector('input');
         if (inputElement) inputElement.focus();
       }
     }, 0);
@@ -40,31 +40,31 @@
     event.preventDefault();
 
     const userCredential = JSON.stringify({ email });
-    const resetURL = $BASE_URL + "/auth/forgot";
+    const resetURL = $BASE_URL + '/auth/forgot';
 
     try {
       const response = await fetch(resetURL, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: userCredential,
-        credentials: "include",
+        credentials: 'include',
       });
 
       const data = await response.json();
-      console.log("data: " + data.message);
+      console.log('data: ' + data.message);
 
       if (response.ok) {
         if (data.message) {
           toastr.success(`${data.message}`);
           closeModal();
           setTimeout(() => {
-            navigate("/", { replace: true });
+            navigate('/', { replace: true });
           }, 2000);
         }
         closeModal();
-        email = "";
+        email = '';
       } else {
         // Handle the error response
         let errorMsg = data.message || `HTTP error! status: ${response.status}`;
@@ -72,7 +72,7 @@
       }
     } catch (error) {
       toastr.error(error.message);
-      email = "";
+      email = '';
     }
   }
 </script>
@@ -163,7 +163,7 @@
   h1 {
     font-size: 2.2em;
     padding-left: 75px;
-    margin: 10px 0 12px 0;
+    margin: 20px 0 12px 0;
   }
 
   :global(.bx--modal-container.bx--modal-container--sm) {

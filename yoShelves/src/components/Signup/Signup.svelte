@@ -151,7 +151,7 @@
               type="submit"
               class="reset-button"
             >
-              Reset
+              Signup
             </Button>
           </div>
         </form>
@@ -253,7 +253,11 @@
     padding-left: 38%;
   }
 
-  :global(.modal-line.s-PYO7Oea7XOhk, .modal-line.s-Fpjlg_y_G6MH) {
+  :global(
+      .modal-line.s-PYO7Oea7XOhk,
+      .modal-line.s-Fpjlg_y_G6MH,
+      .modal-line.s-bLtRAoM-HLUg
+    ) {
     padding-bottom: 1rem;
   }
 
