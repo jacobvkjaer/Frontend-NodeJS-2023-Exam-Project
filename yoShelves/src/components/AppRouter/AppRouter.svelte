@@ -15,6 +15,7 @@
   import Reviews from '../../pages/Reviews/Reviews.svelte';
   import Favorites from '../../pages/Favorites/Favorites.svelte';
 
+  
   let location = useLocation();
   let navigate = useNavigate();
 
@@ -122,12 +123,6 @@
       {:else}
         <div>Error: Email parameter is missing.</div>
       {/if}
-    </Route>
-    <PrivateRoute path="/books/title/:title" let:params>
-      <Book title={params.title} />
-    </PrivateRoute>
-    <Route path="/books1/title1/dragon">
-      <Book />
     </Route>
     <PrivateRoute path="/reviews">
       <Reviews />

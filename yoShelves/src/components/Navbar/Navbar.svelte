@@ -43,10 +43,8 @@
     unsubscribe = user.subscribe(value => {
       isAuthenticated = value.isAuthenticated;
     });
-  });
 
-  onDestroy(() => {
-    unsubscribe();
+    return unsubscribe;
   });
 
   async function handleInput(event) {
@@ -126,8 +124,12 @@
 </script>
 
 <header class="navbar">
-  <Header company="Exam" platformName="YoShelves" bind:isSideNavOpen>
-    {#if isAuthenticated}
+  {#if isAuthenticated}
+    <Header
+      company="Welcome"
+      platformName={$user?.user.username}
+      bind:isSideNavOpen
+    >
       <HeaderUtilities>
         <HeaderSearch
           bind:ref
@@ -156,7 +158,7 @@
             }
           }}
         />
-        <Link to="/books1/title1/dragon">
+        <!-- <Link to="/books1/title1/dragon">
           <div
             class:selected={$location.pathname === '/books1/title1/dragon' &&
               !isOpen}
@@ -166,7 +168,7 @@
               icon={CharacterSentenceCase}
             />
           </div>
-        </Link>
+        </Link> -->
         <Link to="/favorites">
           <div class:selected={$location.pathname === '/favorites' && !isOpen}>
             <HeaderGlobalAction aria-label="Favorites" icon={Favorite} />
@@ -219,14 +221,16 @@
           </HeaderAction>
         </div>
       </HeaderUtilities>
-    {:else}
+    </Header>
+  {:else}
+    <Header company="Exam" platformName="YoShelves" bind:isSideNavOpen>
       <HeaderUtilities>
         <Link to={targetRoute}>
           <HeaderGlobalAction {icon} />
         </Link>
       </HeaderUtilities>
-    {/if}
-  </Header>
+    </Header>
+  {/if}
 </header>
 
 <style>
