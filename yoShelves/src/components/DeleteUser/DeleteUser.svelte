@@ -12,7 +12,13 @@
     ModalFooter,
     HeaderPanelLink,
   } from 'carbon-components-svelte';
-  import { Password, Renew, Logout, Repeat } from 'carbon-icons-svelte';
+  import {
+    Password,
+    Renew,
+    Logout,
+    Repeat,
+    TrashCan,
+  } from 'carbon-icons-svelte';
   import Signup from '../Signup/Signup.svelte';
 
   import toastr, { toastrSetup } from '../../utils/toaster/toastr.js';
@@ -20,7 +26,7 @@
 
   let password = '';
   let sentence = '';
-  let sentenceToMatch = '';
+  let sentenceToMatch = `Delete ${$user.user.username}'s account`;
   let sentenceMatch = false;
   $: sentenceMatch = sentence === sentenceToMatch && sentence.trim() !== '';
 
@@ -57,10 +63,10 @@
   const closeModal = () => {
     isModalOpen = false;
   };
-  onMount(async () => {
-    sentenceToMatch = `Delete ${$user.user.username}'s account`;
-    console.log(sentenceToMatch);
-  });
+  // onMount(async () => {
+  //   sentenceToMatch = `Delete ${$user.user.username}'s account`;
+  //   console.log(sentenceToMatch);
+  // });
 
   async function verifyPassword() {
     const userCredential = JSON.stringify({ password: password });
@@ -143,7 +149,7 @@
   <div class="inline" on:click={openModal} aria-label="Signout">
     <div id="deleteUser">Delete account</div>
     <div class="icon">
-      <Logout size={16} />
+      <TrashCan size={16} />
     </div>
   </div>
 </HeaderPanelLink>

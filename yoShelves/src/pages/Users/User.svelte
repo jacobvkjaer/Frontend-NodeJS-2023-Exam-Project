@@ -1,76 +1,48 @@
 <script>
-  //   import { get } from "svelte/store";
-  //   import { BASE_URL } from "../../stores/urls.js";
-  //   import { user } from "../../stores/user.js";
-  //   import { onMount, afterUpdate } from "svelte";
-  //   import { Grid, Row, Column, ImageLoader } from "carbon-components-svelte";
-  //   import { fetchBook1, fetchBook2, fetchBook3, fetchBook4 } from "../../utils/books/fetchBook.js";
-  //   import BookHeader from "../../components/Books/BookHeader.svelte";
-  //   import BookImage from "../../components/Books/BookImage.svelte";
-  //   import BookDetails from "../../components/Books/BookDetails.svelte";
-  //   import FavoriteBook from "../../components/Favorites/FavoriteBook.svelte";
-  // import { Star, StarFilled, StarHalf } from "carbon-icons-svelte";
-  // import ReviewBook from "../../components/Reviews/ReviewBook.svelte";
-
-  //   let userId;
-  //   let book = null;
-  //   export let title;
-
-  //   const unsubscribe = user.subscribe(($user) => {
-  //     userId = $user?.user?.id;
-  //   });
-
-  //   onMount(async () => {
-  //     book = await fetchBook4();
-  //     console.log("book1:" + JSON.stringify(book, null, 3));
-  //   });
-
-  //   afterUpdate(() => {
-  //     console.log("userId2:", userId);
-  //   });
   import { apiRequest } from '../../utils/fetching/fetching.js';
   import { onMount } from 'svelte';
   import { Grid, Row, Column } from 'carbon-components-svelte';
-  // import UserHeader from '../../components/Users/UserHeader.svelte';
-  // import Loading from '../../components/Loading/Loading.svelte';
+  import UserHeader from '../../components/Users/UserHeader.svelte';
+  import Loading from '../../components/Loading/Loading.svelte';
 
-  let currBook = null;
+  let currUser = null;
   export let id;
   let isLoading = true;
 
-  async function fetchBook() {
-    const endpoint = `/admin/books/${id}`;
+  async function fetchUser() {
+    const endpoint = `/admin/users/${id}`;
 
     try {
       const data = await apiRequest({
         endpoint,
       });
-      currBook = data.book;
-      console.log(currBook);
+      currUser = data.user;
       isLoading = false;
     } catch (e) {
       console.log(e);
     }
   }
-  onMount(fetchBook);
+  onMount(fetchUser);
 </script>
 
 <div class="container">
   <Grid fullWidth>
-    {#if id && currBook}
-      <Row noGutter>
-        <Column class="header-column" sm={1} md={4} lg={8} xlg={14} max={16}>
-          <BookHeader {book} />
-        </Column>
-      </Row>
-      <Row noGutter>
+    <Row noGutter>
+      <Column class="header-column" sm={1} md={4} lg={8} xlg={14} max={16}>
+        <h1>User</h1>
+      </Column>
+    </Row>
+    {#if id && currUser}
+      <UserHeader {currUser} attribute={'username'} />
+
+      <!-- <Row noGutter>
         <Column class="image-column" sm={1} md={1} lg={2} xlg={2} max={2}>
-          <BookImage {book} />
-          <BookDetails {book} />
+          <BookImage {user} />
+          <BookDetails {user} />
         </Column>
         <Column class="title-column" sm={4} md={4} lg={10} xlg={10} max={10}>
           <div class="book-title">
-            {#if book.subtitle}
+            {#if user.subtitle}
               <Row class="title-row-1">
                 <Column
                   class="title-row-column-1"
@@ -82,12 +54,12 @@
                 >
                   <div class="aligner">
                     <h3>Subtitle -</h3>
-                    <h4>{book.subtitle}</h4>
+                    <h4>{user.subtitle}</h4>
                   </div>
                 </Column>
               </Row>
             {/if}
-            {#if book.rating}
+            {#if user.rating}
               <Row class="title-row-1">
                 <Column
                   class="title-row-column-1"
@@ -99,13 +71,13 @@
                 >
                   <div class="aligner">
                     <h3>Rating -</h3>
-                    {#each Array(Math.floor(book.rating)).fill() as _}
+                    {#each Array(Math.floor(user.rating)).fill() as _}
                       <h4><StarFilled size={20} /></h4>
                     {/each}
-                    {#if book.rating % 1 >= 0.5}
+                    {#if user.rating % 1 >= 0.5}
                       <h4><StarHalf size={20} /></h4>
                     {/if}
-                    {#each Array(5 - Math.ceil(book.rating)).fill() as _}
+                    {#each Array(5 - Math.ceil(user.rating)).fill() as _}
                       <h4><Star size={20} /></h4>
                     {/each}
                   </div>
@@ -131,21 +103,22 @@
                 md={4}
                 lg={4}
                 xlg={4}
-                max={16}><p class="book-content">{book.description}</p></Column
+                max={16}><p class="book-content">{user.description}</p></Column
               >
             </Row>
           </div>
         </Column>
         <Column class="buffer-column" sm={2} md={2} lg={4} xlg={4} max={4}>
-          <FavoriteBook {book} />
-          <ReviewBook {book} />
+          <FavoriteBook {user} />
+          <ReviewBook {user} />
         </Column>
-      </Row>
+      </Row> -->
+      {console.log('Hello world!')}
     {:else}
       <Row noGutter>
         <Column sm={1} md={1} lg={1} xlg={16} max={16}>
           <div class="p-text">
-            <p>Loading...</p>
+            <Loading />
           </div>
         </Column>
       </Row>
@@ -160,6 +133,13 @@
     width: 100%;
     padding: 2em 1em;
     color: #f4f4f4;
+  }
+
+  h1 {
+    text-align: center;
+    margin: 0 0 0.7em 0;
+    color: #cdd1d4;
+    font-size: 4em;
   }
 
   :global(

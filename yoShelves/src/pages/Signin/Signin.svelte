@@ -1,59 +1,40 @@
 <script>
+  import { apiRequest } from '../../utils/fetching/fetching.js';
   import { navigate } from 'svelte-navigator';
-  import { BASE_URL } from '../../stores/urls.js';
   import { user } from '../../stores/user.js';
   import { Button, TextInput, PasswordInput } from 'carbon-components-svelte';
   import { Email, Password, Login } from 'carbon-icons-svelte';
-  import toastr, { toastrSetup } from '../../utils/toaster/toastr.js';
   import ForgotPassword from '../../components/ForgotPassword/ForgotPassword.svelte';
-
-  toastrSetup();
 
   let email = '';
   let password = '';
 
   async function handleLogin() {
-    console.log(email, password);
-    const userCredentials = JSON.stringify({ email, password });
-    console.log(userCredentials);
-    const signinURL = $BASE_URL + '/auth/signin';
+    const userCredentials = { email, password };
+    const endpoint = '/auth/signin';
 
     try {
-      console.log(`1`);
-      const response = await fetch(signinURL, {
+      const data = await apiRequest({
+        endpoint,
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: userCredentials,
-        credentials: 'include',
+        useToastr: true,
       });
 
-      const data = await response.json();
+      const userData = {
+        id: data.user.id,
+        role: data.user.role,
+        username: data.user.username,
+        email: data.user.email,
+      };
+      user.set(userData);
 
-      if (response.ok) {
-        if (data.message) {
-          const userData = {
-            id: data.user.id,
-            role: data.user.role,
-            username: data.user.username,
-            email: data.user.email,
-          };
-          user.set(userData);
-          toastr.success(`${data.message}`);
-          setTimeout(() => {
-            navigate('/home', { replace: true });
-          }, 0);
-        }
-      } else {
-        // Handle the error response
-        let errorMsg = data.message || `HTTP error! status: ${response.status}`;
-        throw new Error(errorMsg);
-      }
+      setTimeout(() => {
+        navigate('/home', { replace: true });
+      }, 0);
     } catch (error) {
-      toastr.error(error.message);
-      let email = '';
-      let password = '';
+      email = '';
+      password = '';
     }
   }
 </script>

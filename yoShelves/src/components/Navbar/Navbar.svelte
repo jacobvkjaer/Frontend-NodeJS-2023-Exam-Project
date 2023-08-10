@@ -189,9 +189,30 @@
             closeIcon={UserAvatarFilledAlt}
           >
             <HeaderPanelLinks>
-              <HeaderPanelDivider>Switcher subject 1</HeaderPanelDivider>
-              <HeaderPanelLink>Switcher item 1</HeaderPanelLink>
+              {#if $user.user.role === 'admin'}
+                <HeaderPanelDivider>Control panel</HeaderPanelDivider>
+                <Link to="/admin/users" on:click={() => (isOpen = false)}>
+                  <HeaderPanelLink>Users</HeaderPanelLink>
+                </Link>
+                <Link to="/admin/books" on:click={() => (isOpen = false)}>
+                  <HeaderPanelLink>Books</HeaderPanelLink>
+                </Link>
+                <HeaderPanelLink>Favorites</HeaderPanelLink>
+                <HeaderPanelLink>Reviews</HeaderPanelLink>
+              {:else}
+                <HeaderPanelDivider>Boring stuff</HeaderPanelDivider>
+                <Link to="/home">
+                  <div>
+                    <HeaderPanelLink>item1</HeaderPanelLink>
+                  </div>
+                </Link>
+                <HeaderPanelLink>item2</HeaderPanelLink>
+                <HeaderPanelLink>item3</HeaderPanelLink>
+                <HeaderPanelLink>item4</HeaderPanelLink>
+              {/if}
               <HeaderPanelDivider>Account</HeaderPanelDivider>
+              <HeaderPanelLink>Account settings</HeaderPanelLink>
+              <HeaderPanelLink>Preferences</HeaderPanelLink>
               <Signout on:signedout={() => (isOpen = false)} />
               <DeleteUser on:userDeleted={() => (isOpen = false)} />
             </HeaderPanelLinks>
@@ -209,7 +230,11 @@
 </header>
 
 <style>
-  /* Navbar */
+  :global(a:-webkit-any-link) {
+    text-decoration: none;
+    color: #ffffff;
+  }
+
   :global(.s-hvm9nvLZEY8k .bx--header, .svelte-13u0dam .bx--header__action) {
     background-color: #523a28;
   }
@@ -263,5 +288,10 @@
 
   .selected {
     background-color: #c46200; /* color for selected item */
+  }
+
+  /* Dropdown elements */
+  :global(.bx--switcher__item:nth-child(1)) {
+    margin-top: 0;
   }
 </style>

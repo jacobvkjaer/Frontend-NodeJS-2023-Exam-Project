@@ -8,6 +8,9 @@
   import Signin from '../../pages/Signin/Signin.svelte';
   import ResetPassword from '../ResetPassword/ResetPassword.svelte';
   import Home from '../../pages/Home/Home.svelte';
+  import Users from '../../pages/Users/Users.svelte';
+  import User from '../../pages/Users/User.svelte';
+  import Books from '../../pages/Books/Books.svelte';
   import Book from '../../pages/Books/Book.svelte';
   import Reviews from '../../pages/Reviews/Reviews.svelte';
   import Favorites from '../../pages/Favorites/Favorites.svelte';
@@ -82,11 +85,36 @@
     <Route path="/">
       {#if $user.user.id}
         <Route path="/home" component={Home} />
-        <!-- <svelte:component this={Home} /> -->
       {:else}
         <AllAccess />
       {/if}
     </Route>
+
+    <!-- Admin -->
+    <!-- users -->
+    <PrivateRoute path="/admin/users">
+      <Users />
+    </PrivateRoute>
+    <PrivateRoute path="/admin/users/:id" let:params>
+      {#if params.id}
+        <User id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
+    </PrivateRoute>
+
+    <!-- books -->
+    <PrivateRoute path="/admin/books">
+      <Books />
+    </PrivateRoute>
+    <PrivateRoute path="/admin/books/:id" let:params>
+      {#if params.id}
+        <Book id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
+    </PrivateRoute>
+
     <Route path="/signin" component={Signin} />
     <Route path="/reset/:token" let:params>
       {#if queryParams.email}
