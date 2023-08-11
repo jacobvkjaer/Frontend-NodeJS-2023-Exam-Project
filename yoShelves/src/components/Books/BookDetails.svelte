@@ -43,10 +43,6 @@
 </div>
 
 <style>
-  .wrapper {
-    margin: 0 5px;
-  }
-
   .aligner {
     display: flex;
     justify-content: space-between;

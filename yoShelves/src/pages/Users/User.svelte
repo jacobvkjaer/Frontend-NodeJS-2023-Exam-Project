@@ -181,14 +181,14 @@
     border-bottom: 1px solid #523a28;
   }
 
-  :global(.buffer-column .wrapper.s-bljRqzogRN3f) {
+  /* :global(.buffer-column .wrapper.s-bljRqzogRN3f) {
     padding-bottom: 20px;
     border-bottom: 1px solid #523a28;
-  }
+  } */
 
-  :global(.title-row-1.bx--row) {
+  /* :global(.title-row-1.bx--row) {
     padding-bottom: 25px;
-  }
+  } */
 
   .book-title,
   .book-description {

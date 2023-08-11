@@ -162,7 +162,7 @@
     color: #f4f4f4;
   }
 
-  :global(
+  /* :global(
       .header-column.bx--col-sm-1.bx--col-md-4.bx--col-lg-8.bx--col-xlg-14.bx--col-max-16
     ) {
     border-bottom: 1px solid #523a28;
@@ -208,7 +208,7 @@
 
   :global(.title-row-1.bx--row) {
     padding-bottom: 25px;
-  }
+  } */
 
   .book-title,
   .book-description {

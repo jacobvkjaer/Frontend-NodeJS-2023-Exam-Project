@@ -9,34 +9,10 @@
   import BookImageColumn from '../../components/Books/BookImageColumn.svelte';
   import RowAndColumn from '../../components/Grid/RowAndColumnContainer.svelte';
   import Loading from '../../components/Loading/Loading.svelte';
-  //   import { get } from "svelte/store";
-  //   import { BASE_URL } from "../../stores/urls.js";
-  //   import { user } from "../../stores/user.js";
-  //   import { onMount, afterUpdate } from "svelte";
-  //   import { Grid, Row, Column, ImageLoader } from "carbon-components-svelte";
-  //   import { fetchBook1, fetchBook2, fetchBook3, fetchBook4 } from "../../utils/books/fetchBook.js";
-
-  //   let userId;
-  //   let book = null;
-  //   export let title;
-
-  //   const unsubscribe = user.subscribe(($user) => {
-  //     userId = $user?.user?.id;
-  //   });
-
-  //   onMount(async () => {
-  //     book = await fetchBook4();
-  //     console.log("book1:" + JSON.stringify(book, null, 3));
-  //   });
-
-  //   afterUpdate(() => {
-  //     console.log("userId2:", userId);
-  //   });
+  import BufferColumn from '../../components/Grid/BufferColumn.svelte';
   import { apiRequest } from '../../utils/fetching/fetching.js';
   import { onMount } from 'svelte';
   import { Grid, Row, Column } from 'carbon-components-svelte';
-  // import UserHeader from '../../components/Users/UserHeader.svelte';
-  // import Loading from '../../components/Loading/Loading.svelte';
 
   let book = null;
   export let id;
@@ -61,165 +37,138 @@
 
 <div class="container">
   <Grid fullWidth>
-    {#if id && book}
-      <BookHeader {book} />
-      <Row noGutter>
-        <BookImageColumn {book} />
-        <Column class="title-column" sm={10} md={10} lg={10} xlg={8} max={8}>
-          <div class="book-title">
-            {#if book?.subtitle}
-              <Row class="title-row-1">
-                <Column
-                  class="title-row-column-1"
-                  sm={1}
-                  md={4}
-                  lg={4}
-                  xlg={4}
-                  max={16}
-                >
-                  <BookSubtitle subtitle={book.subtitle} />
-                </Column>
-              </Row>
-            {/if}
-            {#if book.rating}
-              <Row class="title-row-1">
-                <Column
-                  class="title-row-column-1"
-                  sm={1}
-                  md={4}
-                  lg={4}
-                  xlg={4}
-                  max={16}
-                >
-                  <div class="aligner">
-                    <h3>Rating -</h3>
-                    {#each Array(Math.floor(book.rating)).fill() as _}
-                      <h4><StarFilled size={20} /></h4>
-                    {/each}
-                    {#if book.rating % 1 >= 0.5}
-                      <h4><StarHalf size={20} /></h4>
-                    {/if}
-                    {#each Array(5 - Math.ceil(book.rating)).fill() as _}
-                      <h4><Star size={20} /></h4>
-                    {/each}
-                  </div>
-                </Column>
-              </Row>
-            {/if}
-            <Row class="title-row-2">
-              <Column
-                class="title-row-column-1"
-                sm={1}
-                md={4}
-                lg={4}
-                xlg={4}
-                max={6}><h3>Description:</h3></Column
-              >
-            </Row>
-          </div>
-          <div class="book-title">
-            <Row class="title-row">
-              <Column
-                class="description-row-column-1"
-                sm={16}
-                md={16}
-                lg={16}
-                xlg={16}
-                max={8}><p class="book-content">{book.description}</p></Column
-              >
-            </Row>
-          </div>
-        </Column>
-        <Column class="buffer-column" sm={4} md={4} lg={4} xlg={6} max={4}>
-          <FavoriteBook {book} />
-          <ReviewBook {book} />
-        </Column>
-      </Row>
-    {:else}
-      <RowAndColumn classDiv={'p-text'}>
-        <Loading />
-      </RowAndColumn>
-    {/if}
+    <Row>
+      <BufferColumn />
+      <Column class="content-column" sm={16} md={16} lg={16} xlg={14} max={12}>
+        <BookHeader {book} />
+        {#if id && book}
+          <Row>
+            <BookImageColumn {book} />
+            <Column class="title-column" sm={8} md={8} lg={8} xlg={8} max={10}>
+              {#if book?.subtitle}
+                <div class="title-container">
+                  <Row class="title-row-1">
+                    <Column
+                      class="title-row-column-1"
+                      sm={16}
+                      md={16}
+                      lg={16}
+                      xlg={16}
+                      max={16}
+                    >
+                      <BookSubtitle subtitle={book.subtitle} />
+                    </Column>
+                  </Row>
+                </div>
+              {/if}
+              {#if book.rating}
+                <div class="title-container">
+                  <Row class="title-row">
+                    <Column
+                      class="title-row-column"
+                      sm={16}
+                      md={16}
+                      lg={16}
+                      xlg={16}
+                      max={16}
+                    >
+                      <div class="aligner">
+                        <h3>Rating</h3>
+                        <h2>-</h2>
+                        {#each Array(Math.floor(book.rating)).fill() as _}
+                          <h4><StarFilled size={20} /></h4>
+                        {/each}
+                        {#if book.rating % 1 >= 0.5}
+                          <h4><StarHalf size={20} /></h4>
+                        {/if}
+                        {#each Array(5 - Math.ceil(book.rating)).fill() as _}
+                          <h4><Star size={20} /></h4>
+                        {/each}
+                      </div>
+                    </Column>
+                  </Row>
+                </div>
+              {/if}
+              <div class="title-container">
+                <Row class="title-row">
+                  <Column
+                    class="title-row-column"
+                    sm={16}
+                    md={16}
+                    lg={16}
+                    xlg={16}
+                    max={16}><h3>Description:</h3></Column
+                  >
+                </Row>
+              </div>
+              <div class="title-container">
+                <Row class="title-row">
+                  <Column
+                    class="title-row-column"
+                    sm={16}
+                    md={16}
+                    lg={16}
+                    xlg={16}
+                    max={16}
+                    ><p class="book-content">{book.description}</p></Column
+                  >
+                </Row>
+              </div>
+            </Column>
+            <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
+              <div class="actions-container">
+                <FavoriteBook {book} />
+                <ReviewBook {book} />
+              </div>
+            </Column>
+          </Row>
+        {:else}
+          <RowAndColumn classDiv={'p-text'}>
+            <Loading />
+          </RowAndColumn>
+        {/if}
+      </Column>
+      <BufferColumn />
+    </Row>
   </Grid>
 </div>
 
 <style>
-  .container {
-    align-items: center;
-    margin: 0 auto;
-    width: 100%;
-    padding: 2em 1em;
-    color: #f4f4f4;
-  }
-
-  :global(
-      .title-column.bx--col-sm-10.bx--col-md-10.bx--col-lg-10.bx--col-xlg-10.bx--col-max-10
-    ) {
-    padding-left: 20px;
-    padding-right: 20px;
-    border-right: 1px solid #523a28;
-  }
-
-  :global(
-      .buffer-column.bx--col-sm-4.bx--col-md-4.bx--col-lg-4.bx--col-xlg-4.bx--col-max-4
-    ) {
-    padding-left: 20px;
-    padding-right: 20px;
-    border-bottom: 1px solid #523a28;
-  }
-
-  :global(.buffer-column .wrapper.s-bljRqzogRN3f) {
-    padding-bottom: 20px;
-    border-bottom: 1px solid #523a28;
-  }
-
-  :global(.title-row-1.bx--row) {
-    padding-bottom: 25px;
-  }
-
-  .book-title,
-  .book-description {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-  }
-
-  .image-container {
+  :global(.title-column) {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    flex-direction: column;
+    gap: 20px;
   }
 
-  .image-container img {
-    width: 100%;
-    height: auto;
+  .container {
+    padding: 2em 1em;
   }
 
-  .book-title {
-    margin: 0 0 -10px 0;
-    padding: 0 20px 20px 20px;
-    font-size: 2em;
-  }
-
-  .p-text {
-    text-align: center;
-    margin: 1em 0 1.2em 0;
-    color: #cdd1d4;
+  :global(
+      .title-column.bx--col-sm-8.bx--col-md-8.bx--col-lg-8.bx--col-xlg-8.bx--col-max-10
+    ) {
+    padding: 20px;
+    border-right: 1px solid #523a28;
   }
 
   .aligner {
     display: flex;
     justify-content: start;
     align-items: center;
+    gap: 4px;
   }
 
   h3 {
-    padding-right: 8px;
+    padding-right: 23px;
+  }
+
+  h2 {
+    padding-right: 18px;
   }
 
   :global(
-      .buffer-column.bx--col-sm-4.bx--col-md-4.bx--col-lg-4.bx--col-xlg-4.bx--col-max-4
+      .buffer-column.bx--col-sm-4.bx--col-md-4.bx--col-lg-4.bx--col-xlg-4.bx--col-max-3
     ) {
-    min-width: 400px;
+    padding: 20px 0 20px 20px;
   }
 </style>
