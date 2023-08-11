@@ -5,9 +5,11 @@
   import FavoriteBook from '../../components/Favorites/FavoriteBook.svelte';
   import ReviewBook from '../../components/Reviews/ReviewBook.svelte';
 
+  import Container from '../../components/General/Container.svelte';
   import BookSubtitle from '../../components/Books/BookSubtitle.svelte';
   import BookImageColumn from '../../components/Books/BookImageColumn.svelte';
   import RowAndColumn from '../../components/Grid/RowAndColumnContainer.svelte';
+  import RowCol from '../../components/General/RowAndColumnContainer.svelte';
   import Loading from '../../components/Loading/Loading.svelte';
   import BufferColumn from '../../components/Grid/BufferColumn.svelte';
   import { apiRequest } from '../../utils/fetching/fetching.js';
@@ -35,7 +37,7 @@
   onMount(fetchBook);
 </script>
 
-<div class="container">
+<Container>
   <Grid fullWidth>
     <Row>
       <BufferColumn />
@@ -123,25 +125,21 @@
             </Column>
           </Row>
         {:else}
-          <RowAndColumn classDiv={'p-text'}>
+          <RowCol classColumn={'header-column'}>
             <Loading />
-          </RowAndColumn>
+          </RowCol>
         {/if}
       </Column>
       <BufferColumn />
     </Row>
   </Grid>
-</div>
+</Container>
 
 <style>
   :global(.title-column) {
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-
-  .container {
-    padding: 2em 1em;
   }
 
   :global(

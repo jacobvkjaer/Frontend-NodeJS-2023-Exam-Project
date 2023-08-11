@@ -1,5 +1,4 @@
 <script>
-  import { Row, Column } from 'carbon-components-svelte';
   import RowCol from '../General/RowAndColumnContainer.svelte';
 
   export let book;

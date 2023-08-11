@@ -8,7 +8,6 @@
 
   import Container from '../../components/General/Container.svelte';
   import Header from '../../components/General/Header.svelte';
-  import RowAndColumn from '../../components/Grid/RowAndColumnContainer.svelte';
   import RowCol from '../../components/General/RowAndColumnContainer.svelte';
   import BookCard from '../../components/Books/BookCard.svelte';
 

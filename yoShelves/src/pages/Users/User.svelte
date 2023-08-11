@@ -1,11 +1,23 @@
 <script>
+  import BookHeader from '../../components/Books/BookHeader.svelte';
+
+  import { Star, StarFilled, StarHalf } from 'carbon-icons-svelte';
+  import FavoriteBook from '../../components/Favorites/FavoriteBook.svelte';
+  import ReviewBook from '../../components/Reviews/ReviewBook.svelte';
+
+  import BookSubtitle from '../../components/Books/BookSubtitle.svelte';
+  import UserImageColumn from '../../components/Users/UserImageColumn.svelte';
+  import BufferColumn from '../../components/Grid/BufferColumn.svelte';
+
+  import Container from '../../components/General/Container.svelte';
+  import RowCol from '../../components/General/RowAndColumnContainer.svelte';
   import { apiRequest } from '../../utils/fetching/fetching.js';
   import { onMount } from 'svelte';
   import { Grid, Row, Column } from 'carbon-components-svelte';
-  import UserHeader from '../../components/Users/UserHeader.svelte';
   import Loading from '../../components/Loading/Loading.svelte';
+  import UserHeader from '../../components/Users/UserHeader.svelte';
 
-  let currUser = null;
+  let user = null;
   export let id;
   let isLoading = true;
 
@@ -16,7 +28,7 @@
       const data = await apiRequest({
         endpoint,
       });
-      currUser = data.user;
+      user = data.user;
       isLoading = false;
     } catch (e) {
       console.log(e);
@@ -25,106 +37,103 @@
   onMount(fetchUser);
 </script>
 
-<div class="container">
+<Container>
   <Grid fullWidth>
-    <Row noGutter>
-      <Column class="header-column" sm={1} md={4} lg={8} xlg={14} max={16}>
-        <h1>User</h1>
-      </Column>
-    </Row>
-    {#if id && currUser}
-      <UserHeader {currUser} attribute={'username'} />
-
-      <!-- <Row noGutter>
-        <Column class="image-column" sm={1} md={1} lg={2} xlg={2} max={2}>
-          <BookImage {user} />
-          <BookDetails {user} />
-        </Column>
-        <Column class="title-column" sm={4} md={4} lg={10} xlg={10} max={10}>
-          <div class="book-title">
-            {#if user.subtitle}
-              <Row class="title-row-1">
-                <Column
-                  class="title-row-column-1"
-                  sm={1}
-                  md={4}
-                  lg={4}
-                  xlg={4}
-                  max={16}
-                >
-                  <div class="aligner">
-                    <h3>Subtitle -</h3>
-                    <h4>{user.subtitle}</h4>
-                  </div>
-                </Column>
-              </Row>
-            {/if}
-            {#if user.rating}
-              <Row class="title-row-1">
-                <Column
-                  class="title-row-column-1"
-                  sm={1}
-                  md={4}
-                  lg={4}
-                  xlg={4}
-                  max={16}
-                >
-                  <div class="aligner">
-                    <h3>Rating -</h3>
-                    {#each Array(Math.floor(user.rating)).fill() as _}
-                      <h4><StarFilled size={20} /></h4>
-                    {/each}
-                    {#if user.rating % 1 >= 0.5}
-                      <h4><StarHalf size={20} /></h4>
-                    {/if}
-                    {#each Array(5 - Math.ceil(user.rating)).fill() as _}
-                      <h4><Star size={20} /></h4>
-                    {/each}
-                  </div>
-                </Column>
-              </Row>
-            {/if}
-            <Row class="title-row-2">
-              <Column
-                class="title-row-column-1"
-                sm={1}
-                md={4}
-                lg={4}
-                xlg={4}
-                max={6}><h3>Description:</h3></Column
-              >
-            </Row>
-          </div>
-          <div class="book-title">
-            <Row class="title-row">
-              <Column
-                class="description-row-column-1"
-                sm={1}
-                md={4}
-                lg={4}
-                xlg={4}
-                max={16}><p class="book-content">{user.description}</p></Column
-              >
-            </Row>
-          </div>
-        </Column>
-        <Column class="buffer-column" sm={2} md={2} lg={4} xlg={4} max={4}>
-          <FavoriteBook {user} />
-          <ReviewBook {user} />
-        </Column>
-      </Row> -->
-      {console.log('Hello world!')}
-    {:else}
-      <Row noGutter>
-        <Column sm={1} md={1} lg={1} xlg={16} max={16}>
-          <div class="p-text">
+    <Row>
+      <BufferColumn />
+      <Column class="content-column" sm={16} md={16} lg={16} xlg={14} max={12}>
+        <UserHeader {user} />
+        {#if id && user}
+          <Row>
+            <UserImageColumn {user} />
+            <Column class="title-column" sm={8} md={8} lg={8} xlg={8} max={10}>
+              <!-- {#if book?.subtitle}
+                <div class="title-container">
+                  <Row class="title-row-1">
+                    <Column
+                      class="title-row-column-1"
+                      sm={16}
+                      md={16}
+                      lg={16}
+                      xlg={16}
+                      max={16}
+                    >
+                      <BookSubtitle subtitle={book.subtitle} />
+                    </Column>
+                  </Row>
+                </div>
+              {/if}
+              {#if book.rating}
+                <div class="title-container">
+                  <Row class="title-row">
+                    <Column
+                      class="title-row-column"
+                      sm={16}
+                      md={16}
+                      lg={16}
+                      xlg={16}
+                      max={16}
+                    >
+                      <div class="aligner">
+                        <h3>Rating</h3>
+                        <h2>-</h2>
+                        {#each Array(Math.floor(book.rating)).fill() as _}
+                          <h4><StarFilled size={20} /></h4>
+                        {/each}
+                        {#if book.rating % 1 >= 0.5}
+                          <h4><StarHalf size={20} /></h4>
+                        {/if}
+                        {#each Array(5 - Math.ceil(book.rating)).fill() as _}
+                          <h4><Star size={20} /></h4>
+                        {/each}
+                      </div>
+                    </Column>
+                  </Row>
+                </div>
+              {/if}
+              <div class="title-container">
+                <Row class="title-row">
+                  <Column
+                    class="title-row-column"
+                    sm={16}
+                    md={16}
+                    lg={16}
+                    xlg={16}
+                    max={16}><h3>Description:</h3></Column
+                  >
+                </Row>
+              </div>
+              <div class="title-container">
+                <Row class="title-row">
+                  <Column
+                    class="title-row-column"
+                    sm={16}
+                    md={16}
+                    lg={16}
+                    xlg={16}
+                    max={16}
+                    ><p class="book-content">{book.description}</p></Column
+                  >
+                </Row>
+              </div> -->
+            </Column>
+            <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
+              <div class="actions-container">
+                <!-- <FavoriteBook {book} />
+                <ReviewBook {book} /> -->
+              </div>
+            </Column>
+          </Row>
+        {:else}
+          <RowCol classColumn={'header-column'}>
             <Loading />
-          </div>
-        </Column>
-      </Row>
-    {/if}
+          </RowCol>
+        {/if}
+      </Column>
+      <BufferColumn />
+    </Row>
   </Grid>
-</div>
+</Container>
 
 <style>
   .container {

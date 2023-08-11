@@ -1,20 +1,23 @@
 <script>
   import { Row, Column } from 'carbon-components-svelte';
+  import RowCol from '../General/RowAndColumnContainer.svelte';
 
-  export let currUser;
-  export let attribute;
+  export let user;
 </script>
 
-<Row noGutter>
-  <Column class="header-column" sm={6} md={4} lg={5} xlg={4} max={3}>
-    <h1>{currUser?.[attribute] || 'Loading...'}</h1>
-  </Column>
-</Row>
+<RowCol classColumn={'header-column'}>
+  <h1>{user?.username || 'Loading...'}</h1>
+</RowCol>
 
 <style>
+  :global(
+      .header-column.bx--col-sm-16.bx--col-md-16.bx--col-lg-16.bx--col-xlg-16.bx--col-max-16
+    ) {
+    border-bottom: 1px solid #523a28;
+  }
   h1 {
     text-align: center;
-    margin: 0 0 0.7em 0;
+    margin: 1em auto 0.7em auto;
     color: #cdd1d4;
     font-size: 4em;
   }
