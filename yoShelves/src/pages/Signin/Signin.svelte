@@ -30,7 +30,7 @@
       user.set(userData);
 
       setTimeout(() => {
-        navigate('/home', { replace: true });
+        navigate('/', { replace: true });
       }, 0);
     } catch (error) {
       email = '';

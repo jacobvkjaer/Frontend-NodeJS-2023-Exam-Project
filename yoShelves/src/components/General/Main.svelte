@@ -1,7 +1,6 @@
 <div class="flex-center">
   <div class="container">
-    <h1>Welcome to YoShelves</h1>
-    <h3>A community for book lovers</h3>
+    <slot />
   </div>
 </div>
 

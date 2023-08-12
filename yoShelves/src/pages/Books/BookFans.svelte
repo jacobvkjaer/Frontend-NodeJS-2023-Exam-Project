@@ -9,7 +9,7 @@
   import Loading from '../../components/Loading/Loading.svelte';
   import RowCol from '../../components/General/RowAndColumnContainer.svelte';
   import BookHeader from '../../components/Books/BookHeader.svelte';
-  import BookTitleSection from '../../components/Books/BookTitleSection.svelte';
+  import BookFansSection from '../../components/Books/BookFansSection.svelte';
 
   import BookImageColumn from '../../components/Books/BookImageColumn.svelte';
   import DeleteBook from '../../components/Books/DeleteBook.svelte';
@@ -53,7 +53,7 @@
         {#if id && book}
           <Row>
             <BookImageColumn {book} />
-            <BookTitleSection {book} {isAdmin} />
+            <BookFansSection {book} {isAdmin} />
             <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
               <div class="actions-container">
                 {#if isAdmin}

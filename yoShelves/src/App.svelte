@@ -17,16 +17,16 @@
       console.log('Making /auth/status request');
       const authStatusURL = `${$BASE_URL}/auth/status`;
       const response = await fetch(authStatusURL, {
-        credentials: 'include', // This is necessary to include the session cookie in the request
+        credentials: 'include',
       });
 
       if (response.ok) {
         console.log(`getting data...`);
         const data = await response.json();
-        user.set(data.user); // If the user is logged in, this will update the user store with their information
+        user.set(data.user);
       } else {
         console.log(`clearing user...`);
-        user.clearUser(); // If the user is not logged in, this will clear the user store
+        user.clearUser();
       }
 
       // Subscribe to the user state and log it whenever it changes

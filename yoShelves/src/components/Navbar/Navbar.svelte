@@ -2,9 +2,9 @@
   import { get } from 'svelte/store';
   import { BASE_URL } from '../../stores/urls.js';
   import { user } from '../../stores/user.js';
-  import { Link, useLocation, navigate } from 'svelte-navigator';
+  import { Link, useLocation, navigate, useMatch } from 'svelte-navigator';
   import Signout from '../Signout/Signout.svelte';
-  import DeleteUser from '../DeleteUser/DeleteUser.svelte';
+  import DeleteUser from '../Account/DeleteAccount.svelte';
   import { onMount, onDestroy } from 'svelte';
   import {
     Header,
@@ -31,17 +31,21 @@
   let expanded = false;
 
   let location = useLocation();
+  const favoriteMatch = useMatch('/favorites');
+  const favoriteIdFanMatch = useMatch('/favorites/:id/fans');
   let targetRoute;
   let icon;
 
   let email;
   let unsubscribe;
 
+  let isAdmin;
   let isAuthenticated;
 
   onMount(() => {
     unsubscribe = user.subscribe(value => {
       isAuthenticated = value.isAuthenticated;
+      isAdmin = value.user.role === 'admin';
     });
 
     return unsubscribe;
@@ -170,7 +174,9 @@
           </div>
         </Link> -->
         <Link to="/favorites">
-          <div class:selected={$location.pathname === '/favorites' && !isOpen}>
+          <div
+            class:selected={($favoriteMatch || $favoriteIdFanMatch) && !isOpen}
+          >
             <HeaderGlobalAction aria-label="Favorites" icon={Favorite} />
           </div>
         </Link>
@@ -191,12 +197,12 @@
             closeIcon={UserAvatarFilledAlt}
           >
             <HeaderPanelLinks>
-              {#if $user.user.role === 'admin'}
+              {#if isAdmin}
                 <HeaderPanelDivider>Control panel</HeaderPanelDivider>
-                <Link to="/admin/users" on:click={() => (isOpen = false)}>
+                <Link to="/users" on:click={() => (isOpen = false)}>
                   <HeaderPanelLink>Users</HeaderPanelLink>
                 </Link>
-                <Link to="/admin/books" on:click={() => (isOpen = false)}>
+                <Link to="/books" on:click={() => (isOpen = false)}>
                   <HeaderPanelLink>Books</HeaderPanelLink>
                 </Link>
                 <HeaderPanelLink>Favorites</HeaderPanelLink>

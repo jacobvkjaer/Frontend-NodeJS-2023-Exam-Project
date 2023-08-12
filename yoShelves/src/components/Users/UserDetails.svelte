@@ -1,12 +1,6 @@
 <script>
+  import { truncate } from '../../utils/string-manipulation/string-manipulation';
   export let user;
-
-  function truncate(str, length) {
-    if (str.length <= length) {
-      return str;
-    }
-    return str.substring(0, length);
-  }
 </script>
 
 <div class="wrapper">

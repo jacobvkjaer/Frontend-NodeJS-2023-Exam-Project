@@ -1,25 +1,19 @@
 <script>
+  import { truncateWithTrails } from '../../utils/string-manipulation/string-manipulation';
   export let book;
-
-  function truncate(str, length) {
-    if (str.length <= length) {
-      return str;
-    }
-    return str.substring(0, length) + '...';
-  }
 </script>
 
 <div class="wrapper">
   {#if book.author}
     <div class="aligner">
       <h6>Author:</h6>
-      <p title={book.author}>{truncate(book.author, 15)}</p>
+      <p title={book.author}>{truncateWithTrails(book.author, 15)}</p>
     </div>
   {/if}
   {#if book.publisher}
     <div class="aligner">
       <h6>Publisher:</h6>
-      <p title={book.publisher}>{truncate(book.publisher, 11)}</p>
+      <p title={book.publisher}>{truncateWithTrails(book.publisher, 11)}</p>
     </div>
   {/if}
   {#if book.published_date}

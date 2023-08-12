@@ -4,18 +4,18 @@
   import { Router, Route, useLocation, useNavigate } from 'svelte-navigator';
   import qs from 'qs';
   import PrivateRoute from '../RoutesPrivate/PrivateRoute.svelte';
-  import AllAccess from '../../pages/AllAccess/AllAccess.svelte';
+  import AllAccess from '../../pages/Main/AllAccess.svelte';
   import Signin from '../../pages/Signin/Signin.svelte';
   import ResetPassword from '../ResetPassword/ResetPassword.svelte';
-  import Home from '../../pages/Home/Home.svelte';
+  import Home from '../../pages/Main/Home.svelte';
   import Users from '../../pages/Users/Users.svelte';
   import User from '../../pages/Users/User.svelte';
   import Books from '../../pages/Books/Books.svelte';
   import Book from '../../pages/Books/Book.svelte';
-  import Reviews from '../../pages/Reviews/Reviews.svelte';
+  import BookFans from '../../pages/Books/BookFans.svelte';
   import Favorites from '../../pages/Favorites/Favorites.svelte';
+  import Reviews from '../../pages/Reviews/Reviews.svelte';
 
-  
   let location = useLocation();
   let navigate = useNavigate();
 
@@ -83,32 +83,44 @@
 
 <Router on:navigate={handleNavigation} primary={false}>
   <main>
+    <!-- Upon reload -->
     <Route path="/">
-      {#if $user.user.id}
-        <Route path="/home" component={Home} />
+      {#if $user?.user.id}
+        setTimeout(() => {navigate('/home', { replace: true })}, 0);
       {:else}
         <AllAccess />
       {/if}
     </Route>
+    <!-- Home -->
+    <PrivateRoute path="/home">
+      <Home />
+    </PrivateRoute>
 
     <!-- Admin -->
     <!-- users -->
-    <PrivateRoute path="/admin/users">
+    <PrivateRoute path="/users">
       <Users />
     </PrivateRoute>
-    <PrivateRoute path="/admin/users/:id" let:params>
+    <PrivateRoute path="/users/:id" let:params>
       {#if params.id}
         <User id={params.id} />
       {:else}
         <div>Error</div>
       {/if}
     </PrivateRoute>
+    <PrivateRoute path="/favorites/:id/fans" let:params>
+      {#if params.id}
+        <BookFans id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
+    </PrivateRoute>
 
     <!-- books -->
-    <PrivateRoute path="/admin/books">
+    <PrivateRoute path="/books">
       <Books />
     </PrivateRoute>
-    <PrivateRoute path="/admin/books/:id" let:params>
+    <PrivateRoute path="/books/:id" let:params>
       {#if params.id}
         <Book id={params.id} />
       {:else}
@@ -127,8 +139,17 @@
     <PrivateRoute path="/reviews">
       <Reviews />
     </PrivateRoute>
+
+    <!-- Favorites -->
     <PrivateRoute path="/favorites">
       <Favorites />
+    </PrivateRoute>
+    <PrivateRoute path="/favorites/:id" let:params>
+      {#if params.id}
+        <Book id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
     </PrivateRoute>
   </main>
 </Router>

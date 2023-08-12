@@ -4,7 +4,7 @@
 
   //   <Header header={'Books'} />
 
-  export let classColumn;
+  // export let classColumn;
   export let header;
 </script>
 
