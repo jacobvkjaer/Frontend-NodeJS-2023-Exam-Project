@@ -4,7 +4,7 @@
 </script>
 
 <div class="image-container">
-  <ImageLoader src={book?.image} />
+  <ImageLoader fadeIn="true" src={book?.image} />
 </div>
 
 <style>

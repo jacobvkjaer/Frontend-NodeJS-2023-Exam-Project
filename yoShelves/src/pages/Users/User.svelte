@@ -3,6 +3,7 @@
 
   import { Star, StarFilled, StarHalf } from 'carbon-icons-svelte';
   import FavoriteBook from '../../components/Favorites/FavoriteBook.svelte';
+  import DeleteUser from '../../components/Users/DeleteUser.svelte';
   import ReviewBook from '../../components/Reviews/ReviewBook.svelte';
 
   import BookSubtitle from '../../components/Books/BookSubtitle.svelte';
@@ -119,8 +120,8 @@
             </Column>
             <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
               <div class="actions-container">
-                <!-- <FavoriteBook {book} />
-                <ReviewBook {book} /> -->
+                <DeleteUser {user} />
+                <!-- <ReviewBook {book} /> -->
               </div>
             </Column>
           </Row>

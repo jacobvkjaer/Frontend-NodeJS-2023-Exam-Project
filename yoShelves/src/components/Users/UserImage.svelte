@@ -5,7 +5,7 @@
 
 <div class="image-container">
   <div class="image">
-    <ImageLoader src={userIcon} />
+    <ImageLoader fadeIn src={userIcon} />
   </div>
 </div>
 

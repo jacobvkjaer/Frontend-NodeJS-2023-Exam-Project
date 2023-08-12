@@ -26,7 +26,10 @@ export async function apiRequest({
       credentials,
     });
 
+    // Logging for testing purposes
     const data = await response.json();
+    console.log(`reponse: apiRequest`);
+    console.log(data.message);
 
     if (!response.ok) {
       let errorMsg = data.message || `HTTP error! status: ${response.status}`;

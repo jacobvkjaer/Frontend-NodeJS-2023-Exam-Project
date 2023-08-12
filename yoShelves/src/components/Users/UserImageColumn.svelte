@@ -2,6 +2,7 @@
   import { Column } from 'carbon-components-svelte';
   import UserImage from './UserImage.svelte';
   import UserDetails from './UserDetails.svelte';
+
   export let user;
 </script>
 

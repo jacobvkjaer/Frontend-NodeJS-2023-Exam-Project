@@ -1,7 +1,6 @@
 <script>
   import { HeaderGlobalAction } from 'carbon-components-svelte';
-  import { StarReview, FavoriteFilled } from 'carbon-icons-svelte';
-  import { Delete } from 'carbon-pictograms-svelte';
+  import { Favorite, FavoriteFilled } from 'carbon-icons-svelte';
   import { onMount } from 'svelte';
   import { user } from '../../stores/user.js';
   import { BASE_URL } from '../../stores/urls.js';
@@ -10,7 +9,7 @@
   let userId;
   export let book;
   let isFavorite = true;
-  let numberOfReviews;
+  let numberOfFavorites;
 
   // Subscribe to user store and update userId
   const unsubscribe = user.subscribe(async $user => {
@@ -38,8 +37,8 @@
       }
 
       const data = await response.json();
-      numberOfReviews = data.count;
-      console.log(numberOfReviews);
+      numberOfFavorites = data.count;
+      console.log(numberOfFavorites);
     } catch (error) {
       console.error('Failed to fetch favorite count:', error);
     }
@@ -133,44 +132,44 @@
 </script>
 
 <div class="wrapper">
-  {#if numberOfReviews > 1}
+  {#if numberOfFavorites > 1}
     <div class="aligner">
-      <p>{numberOfReviews} users have reviewed this title</p>
+      <p>{numberOfFavorites} users have favorited this title</p>
     </div>
-  {:else if numberOfReviews > 0}
+  {:else if numberOfFavorites > 0}
     <div class="aligner">
-      <p>1 user has reviewed this title</p>
+      <p>1 user has favorited this title</p>
     </div>
   {:else}
     <div class="aligner">
-      <p>Be the first to review this title!</p>
+      <p>Be the first to favorite this title!</p>
     </div>
   {/if}
 
   {#if isFavorite}
     <div class="aligner">
+      <p class="p-1">Remove from favorites:</p>
       <HeaderGlobalAction
         class="icon"
         on:click={toggleFavorite}
-        icon={Delete}
+        icon={FavoriteFilled}
       />
-      <p class="p-1">&nbsp;:&ensp;Delete your review</p>
     </div>
   {:else}
     <div class="aligner">
+      <p class="p-2">Add to favorites:</p>
       <HeaderGlobalAction
         class="icon"
         on:click={toggleFavorite}
-        icon={StarReview}
+        icon={Favorite}
       />
-      <p class="p-2">&nbsp;:&ensp;Add a review</p>
     </div>
   {/if}
 </div>
 
 <style>
   :global(.icon.bx--header__action) {
-    /* margin-top: 20px; */
+    margin-top: 20px;
   }
 
   :global(.icon.bx--header__action svg) {
@@ -179,25 +178,28 @@
   }
 
   .wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    /* padding-bottom: 30px; */
+    margin: 0 5px;
   }
 
   .aligner {
     display: flex;
     justify-content: start;
     align-items: center;
+    margin-top: 5px;
+  }
+
+  h6 {
+    padding-right: 5px;
   }
 
   p {
-    font-size: 22px;
+    font-size: 25px;
+    margin-top: 20px;
   }
 
   .p-1,
   .p-2 {
     font-size: 18px;
-    /* padding-right: 10px; */
+    padding-right: 10px;
   }
 </style>

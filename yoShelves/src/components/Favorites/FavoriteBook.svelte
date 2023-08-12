@@ -1,130 +1,107 @@
 <script>
-  import { HeaderGlobalAction } from 'carbon-components-svelte';
-  import { Favorite, FavoriteFilled } from 'carbon-icons-svelte';
   import { onMount } from 'svelte';
+  import { apiRequest } from '../../utils/fetching/fetching.js';
   import { user } from '../../stores/user.js';
-  import { BASE_URL } from '../../stores/urls.js';
-  import { onDestroy } from 'svelte';
+  import { Favorite, FavoriteFilled } from 'carbon-icons-svelte';
+  import { HeaderGlobalAction } from 'carbon-components-svelte';
 
-  let userId;
   export let book;
+
+  let userId = $user?.user.id;
   let isFavorite = true;
   let numberOfFavorites;
 
-  // Subscribe to user store and update userId
-  const unsubscribe = user.subscribe(async $user => {
-    userId = $user?.user?.id;
-    console.log(userId);
-  });
-
-  onDestroy(() => {
-    unsubscribe();
-  });
+  // // Subscribe to user store and update userId
+  // const unsubscribe = user.subscribe(async $user => {
+  //   userId = $user?.user?.id;
+  //   console.log(userId);
+  // });
 
   onMount(async () => {
     await fetchFavoriteCount();
   });
 
   async function fetchFavoriteCount() {
+    const endpoint = `/books/${book.id}/favorites`;
+
     try {
-      const response = await fetch(`${$BASE_URL}/books/${book.id}/favorites`, {
-        method: 'GET',
-        credentials: 'include',
+      const data = await apiRequest({
+        endpoint,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
       numberOfFavorites = data.count;
       console.log(numberOfFavorites);
-    } catch (error) {
-      console.error('Failed to fetch favorite count:', error);
+      console.log(data.message);
+    } catch (e) {
+      console.log(e);
     }
   }
 
   let hasFetched = false;
   $: if (userId && !hasFetched) {
+    console.log('Got to fetch');
     hasFetched = true;
     fetchFavorite();
   }
 
   async function fetchFavorite() {
+    console.log('Entered fetch function');
+    const endpoint = `/users/${userId}/favorites/${book.id}`;
+
     try {
-      const response = await fetch(
-        `${$BASE_URL}/users/${userId}/favorites/${book.id}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
-      );
-
-      console.log(response);
-
-      if (response.ok) {
-        isFavorite = true;
-      } else if (response.status === 404) {
+      const response = await apiRequest({
+        endpoint,
+      });
+      console.log(`logging: fetchFavorite`);
+      if (response.status === 404) {
+        console.log('got to 404');
         isFavorite = false;
-      } else {
-        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
-      console.error('Failed to check if the book is favorited:', error);
+      console.log(response);
+      console.log(response.message);
+      isFavorite = true;
+    } catch (e) {
+      isFavorite = false;
+      console.log(e);
     }
   }
 
   async function toggleFavorite() {
     if (!isFavorite) {
-      console.log('book11:' + JSON.stringify(book, null, 3));
+      console.log('Entered the toggleFavorite - if');
+      const endpoint = `/users/${userId}/favorites`;
+
       // Add to favorites
       try {
-        const response = await fetch(`${$BASE_URL}/users/${userId}/favorites`, {
+        console.log('Beginning of try in toggle - if');
+        const response = await apiRequest({
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(book),
-          credentials: 'include',
+          endpoint,
+          body: book,
+          useToastr: true,
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const message = await response.json();
-        console.log(message);
-
-        // If the request was successful, update the UI
+        console.log('This is the message of toggleFavorite');
+        console.log(response.message);
         isFavorite = true;
-      } catch (error) {
-        console.error('Failed to favorite the book:', error);
+      } catch (e) {
+        console.log(e);
       }
     } else {
-      // Unfavorite a book
+      console.log('Entered the toggleFavorite - else');
+      // Delete from favorites
+      const endpoint = `/users/${userId}/favorites/${book.id}`;
+
       try {
-        const response = await fetch(
-          `${$BASE_URL}/users/${userId}/favorites/${book.id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-          }
-        );
+        const response = await apiRequest({
+          method: 'DELETE',
+          endpoint,
+          useToastr: true,
+        });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const message = await response.json();
-        console.log(message);
-
-        // If the request was successful, update the UI
+        console.log(response.message);
         isFavorite = false;
-      } catch (error) {
-        console.error('Failed to unfavorite the book:', error);
+      } catch (e) {
+        console.log(e);
       }
     }
     await fetchFavoriteCount();
@@ -168,15 +145,6 @@
 </div>
 
 <style>
-  :global(.icon.bx--header__action) {
-    /* margin-top: 20px; */
-  }
-
-  :global(.icon.bx--header__action svg) {
-    height: 32px;
-    width: 32px;
-  }
-
   .wrapper {
     display: flex;
     flex-direction: column;
@@ -190,18 +158,12 @@
     align-items: center;
   }
 
-  h6 {
-    /* padding-right: 5px; */
-  }
-
   p {
-    font-size: 25px;
-    /* margin-top: 20px; */
+    font-size: 22px;
   }
 
   .p-1,
   .p-2 {
     font-size: 18px;
-    /* padding-right: 10px; */
   }
 </style>
