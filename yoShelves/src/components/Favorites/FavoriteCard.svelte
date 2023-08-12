@@ -1,6 +1,7 @@
 <script>
   import { truncateWithTrails } from './../../utils/string-manipulation/string-manipulation.js';
   import { onMount } from 'svelte';
+  import { user } from '../../stores/user.js';
   import { Link } from 'svelte-navigator';
   import { ImageLoader } from 'carbon-components-svelte';
   import bookIcon from '../../assets/icons/book.svg';
@@ -8,11 +9,14 @@
   import ImageContainer from '../Card/ImageContainer.svelte';
 
   export let favorite;
-  let book = favorite.favorited_book;
+
+  let isAdmin = $user?.user.role === 'admin';
+  let book = favorite?.favorited_book;
+  let endpoint = isAdmin ? `${book.id}/fans` : `${book.id}`;
 </script>
 
 <CardContainer>
-  <Link to={`${book.id}/fans`} class="link-id">
+  <Link to={endpoint} class="link-id">
     <ImageContainer>
       <ImageLoader slot="image" src={book.image} alt="image" />
 

@@ -47,7 +47,14 @@
         {#if id && user}
           <Row>
             <UserImageColumn {user} />
-            <Column class="title-column" sm={8} md={8} lg={8} xlg={8} max={10}>
+            <Column
+              class="title-column-user"
+              sm={8}
+              md={8}
+              lg={8}
+              xlg={8}
+              max={9}
+            >
               <!-- {#if book?.subtitle}
                 <div class="title-container">
                   <Row class="title-row-1">
@@ -180,6 +187,13 @@
     ) {
     padding-left: 20px;
     padding-right: 20px;
+    border-right: 1px solid #523a28;
+  }
+
+  :global(
+      .title-column-user.bx--col-sm-8.bx--col-md-8.bx--col-lg-8.bx--col-xlg-8.bx--col-max-9
+    ) {
+    padding: 20px;
     border-right: 1px solid #523a28;
   }
 
