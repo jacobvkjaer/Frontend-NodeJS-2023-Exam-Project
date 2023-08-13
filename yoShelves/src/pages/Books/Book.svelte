@@ -1,7 +1,6 @@
 <script>
   import { user } from '../../stores/user.js';
   import { apiRequest } from '../../utils/fetching/fetching.js';
-  import { onMount } from 'svelte';
   import { Grid, Row, Column } from 'carbon-components-svelte';
 
   import Container from '../../components/General/Container.svelte';
@@ -17,31 +16,66 @@
   import ReviewBook from '../../components/Reviews/ReviewBook.svelte';
 
   export let id;
+  export let search = false;
 
-  console.log('Got to bookfans!');
   let userId = $user?.user.id;
   let isAdmin = $user?.user.role === 'admin';
-  let book = null;
+  $: book = null;
 
-  // // GET /users/:id/favorites/:bookId
+  $: if (id && userId) {
+    fetchBook();
+  }
+
   async function fetchBook() {
-    const endpoint = isAdmin
+    const endpoint = search
+      ? `/books/search/id/${id}`
+      : isAdmin
       ? `/admin/books/${id}`
       : `/users/${userId}/favorites/${id}`;
 
+    let data;
+
     try {
-      const data = await apiRequest({
+      data = await apiRequest({
         endpoint,
       });
-      console.log(isAdmin);
-      console.log(book);
-      if (isAdmin) book = data.book;
-      else book = data.favorite.favorited_book;
+
+      console.log(data);
+
+      // Checks whether the book with is in db
+      await apiRequest({
+        endpoint: `/books/${id}`,
+      });
     } catch (e) {
-      console.log(e);
+      // if in db
+      if (e.status === 404) {
+        data = await apiRequest({
+          method: 'POST',
+          endpoint: `/books/`,
+          body: data,
+        });
+      } else if (e.status === 500) {
+        console.log('Book ID not found in the API');
+      } else {
+        console.log(e.message);
+      }
+    } finally {
+      if (data) {
+        console.log(`inside finally - data`);
+        if (search) {
+          console.log(`inside finally - search`);
+          // console.log(isAdmin);
+          if (isAdmin) book = data.book;
+          else book = data.book;
+        } else {
+          if (isAdmin) book = data.book;
+          else book = data.favorite.favorited_book;
+        }
+        console.log(`inside finally - else`);
+      }
     }
+    console.log('Book after update:', book);
   }
-  onMount(fetchBook);
 </script>
 
 <Container>
@@ -49,18 +83,17 @@
     <Row>
       <BufferColumn />
       <Column class="content-column" sm={16} md={16} lg={16} xlg={14} max={12}>
-        <BookHeader {book} />
-        {#if id && book}
+        {#if book}
+          <BookHeader {book} />
           <Row>
             <BookImageColumn {book} />
-            <BookTitleSection {book} {isAdmin} />
+            <BookTitleSection {book} />
             <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
               <div class="actions-container">
+                <FavoriteBook {book} />
+                <!-- <ReviewBook {book} /> -->
                 {#if isAdmin}
                   <DeleteBook {book} />
-                {:else}
-                  <FavoriteBook {book} />
-                  <ReviewBook {book} />
                 {/if}
               </div>
             </Column>

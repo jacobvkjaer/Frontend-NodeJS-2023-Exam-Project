@@ -1,15 +1,18 @@
 <script>
-  import { onMount } from 'svelte';
+  import { user } from './../../stores/user.js';
   import { apiRequest } from '../../utils/fetching/fetching.js';
   import { TrashCan, Checkmark } from 'carbon-icons-svelte';
   import { HeaderGlobalAction } from 'carbon-components-svelte';
 
   export let book;
 
-  //   let userId = user?.id;
+  let userId = $user?.user.id;
+  let isAdmin = $user?.user.role === 'admin';
   let isDeleted = true;
 
-  onMount(fetchBook);
+  $: if (book && book.id) {
+    fetchBook();
+  }
 
   async function fetchBook() {
     console.log('Entered the fetchBook');

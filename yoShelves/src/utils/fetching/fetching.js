@@ -33,7 +33,10 @@ export async function apiRequest({
 
     if (!response.ok) {
       let errorMsg = data.message || `HTTP error! status: ${response.status}`;
-      throw new Error(errorMsg);
+      throw {
+        message: errorMsg,
+        status: response.status,
+      };
     }
 
     if (useToastr && data.message) {

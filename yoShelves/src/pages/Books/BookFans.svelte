@@ -56,11 +56,10 @@
             <BookFansSection {book} {isAdmin} />
             <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
               <div class="actions-container">
+                <FavoriteBook {book} />
+                <!-- <ReviewBook {book} /> -->
                 {#if isAdmin}
                   <DeleteBook {book} />
-                {:else}
-                  <FavoriteBook {book} />
-                  <ReviewBook {book} />
                 {/if}
               </div>
             </Column>

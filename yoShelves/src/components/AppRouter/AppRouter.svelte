@@ -127,6 +127,13 @@
         <div>Error</div>
       {/if}
     </PrivateRoute>
+    <PrivateRoute path="/books/search/:id" let:params>
+      {#if params.id}
+        <Book id={params.id} search="true" />
+      {:else}
+        <div>Error</div>
+      {/if}
+    </PrivateRoute>
 
     <Route path="/signin" component={Signin} />
     <Route path="/reset/:token" let:params>

@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from 'svelte';
   import { apiRequest } from '../../utils/fetching/fetching.js';
   import { user } from '../../stores/user.js';
   import { Favorite, FavoriteFilled } from 'carbon-icons-svelte';
@@ -8,18 +7,16 @@
   export let book;
 
   let userId = $user?.user.id;
+  let isAdmin = $user?.user.role === 'admin';
   let isFavorite = true;
   let numberOfFavorites;
 
-  // // Subscribe to user store and update userId
-  // const unsubscribe = user.subscribe(async $user => {
-  //   userId = $user?.user?.id;
-  //   console.log(userId);
-  // });
-
-  onMount(async () => {
-    await fetchFavoriteCount();
-  });
+  $: if (book && book.id) {
+    fetchFavoriteCount();
+    if (userId && !isAdmin) {
+      fetchFavorite();
+    }
+  }
 
   async function fetchFavoriteCount() {
     const endpoint = `/books/${book.id}/favorites`;
@@ -34,13 +31,6 @@
     } catch (e) {
       console.log(e);
     }
-  }
-
-  let hasFetched = false;
-  $: if (userId && !hasFetched) {
-    console.log('Got to fetch');
-    hasFetched = true;
-    fetchFavorite();
   }
 
   async function fetchFavorite() {
@@ -109,7 +99,7 @@
 </script>
 
 <div class="wrapper">
-  {#if numberOfFavorites > 1}
+  {#if numberOfFavorites > 1 || (isAdmin && numberOfFavorites === 0)}
     <div class="aligner">
       <p>{numberOfFavorites} users have favorited this title</p>
     </div>
@@ -123,24 +113,26 @@
     </div>
   {/if}
 
-  {#if isFavorite}
-    <div class="aligner">
-      <HeaderGlobalAction
-        class="icon"
-        on:click={toggleFavorite}
-        icon={FavoriteFilled}
-      />
-      <p class="p-1">&nbsp;:&ensp;Remove from favorites</p>
-    </div>
-  {:else}
-    <div class="aligner">
-      <HeaderGlobalAction
-        class="icon"
-        on:click={toggleFavorite}
-        icon={Favorite}
-      />
-      <p class="p-2">&nbsp;:&ensp;Add to favorites</p>
-    </div>
+  {#if !isAdmin}
+    {#if isFavorite}
+      <div class="aligner">
+        <HeaderGlobalAction
+          class="icon"
+          on:click={toggleFavorite}
+          icon={FavoriteFilled}
+        />
+        <p class="p-1">&nbsp;:&ensp;Remove from favorites</p>
+      </div>
+    {:else}
+      <div class="aligner">
+        <HeaderGlobalAction
+          class="icon"
+          on:click={toggleFavorite}
+          icon={Favorite}
+        />
+        <p class="p-2">&nbsp;:&ensp;Add to favorites</p>
+      </div>
+    {/if}
   {/if}
 </div>
 

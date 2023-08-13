@@ -4,7 +4,7 @@
   import { Star, StarFilled, StarHalf } from 'carbon-icons-svelte';
 
   export let book;
-  export let isAdmin;
+  // export let isAdmin;
 </script>
 
 <Column class="title-column" sm={8} md={8} lg={8} xlg={8} max={10}>

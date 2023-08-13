@@ -1,7 +1,9 @@
 <script>
+  import { user } from '../../stores/user.js';
+  import { apiRequest } from '../../utils/fetching/fetching.js';
+  import { debounce } from '../../utils/search/debouncing.js';
   import { get } from 'svelte/store';
   import { BASE_URL } from '../../stores/urls.js';
-  import { user } from '../../stores/user.js';
   import { Link, useLocation, navigate, useMatch } from 'svelte-navigator';
   import Signout from '../Signout/Signout.svelte';
   import DeleteUser from '../Account/DeleteAccount.svelte';
@@ -23,12 +25,10 @@
     Favorite,
     UserAvatarFilledAlt,
     Home,
-    CharacterSentenceCase,
   } from 'carbon-icons-svelte';
 
   let isSideNavOpen = true;
   let isOpen = false;
-  let expanded = false;
 
   let location = useLocation();
   const favoriteMatch = useMatch('/favorites');
@@ -36,64 +36,9 @@
   let targetRoute;
   let icon;
 
-  let email;
-  let unsubscribe;
-
   let isAdmin;
   let isAuthenticated;
-
-  onMount(() => {
-    unsubscribe = user.subscribe(value => {
-      isAuthenticated = value.isAuthenticated;
-      isAdmin = value.user.role === 'admin';
-    });
-
-    return unsubscribe;
-  });
-
-  async function handleInput(event) {
-    const query = event.target.value;
-    if (query.length < 3) {
-      results = [];
-      return;
-    }
-
-    console.log(query);
-    const baseUrl = get(BASE_URL);
-    const bookURL = `${baseUrl}/books/search/title-or-author/${encodeURIComponent(
-      query
-    )}`;
-    console.log(bookURL);
-
-    try {
-      const response = await fetch(bookURL, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP error! status: ${response.status}, message: ${errorText}`
-        );
-      }
-
-      const books = await response.json();
-      results = books.map(book => ({
-        href: `/books/title/${encodeURIComponent(book.title)}`,
-        text: book.title,
-        description: book.author,
-      }));
-
-      console.log(results);
-      console.log(results.href);
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  let unsubscribe;
 
   $: {
     if ($location.pathname === '/signin') {
@@ -105,26 +50,51 @@
     }
   }
 
-  // const data = [
-  //   // Insert your data here...
-  // ];
+  onMount(() => {
+    unsubscribe = user.subscribe(value => {
+      isAuthenticated = value.isAuthenticated;
+      isAdmin = value.user.role === 'admin';
+    });
 
-  let ref = null;
+    return unsubscribe;
+  });
+
+  // Search functionality
+  let ref;
   let active = false;
   let value = '';
   let selectedResultIndex = 0;
   let events = [];
+  let results = [];
 
-  $: lowerCaseValue = value.toLowerCase();
-  $: results =
-    value.length > 0
-      ? data.filter(item => {
-          return (
-            item.text.toLowerCase().includes(lowerCaseValue) ||
-            item.description.includes(lowerCaseValue)
-          );
-        })
-      : [];
+  const fetchBooks = debounce(async query => {
+    try {
+      const endpoint = `/books/search/title-or-author/${encodeURIComponent(
+        query
+      )}`;
+      const data = await apiRequest({
+        endpoint,
+        useToastr: true,
+      });
+
+      results = data.map(book => ({
+        href: `/books/search/${encodeURIComponent(book.id)}`,
+        text: book.title,
+        description: book.author,
+      }));
+    } catch (e) {
+      console.error('Error fetching books:', e.message);
+    }
+  }, 500);
+
+  function handleInput(event) {
+    const query = event.target.value;
+    if (query.length < 3) {
+      results = [];
+      return;
+    }
+    fetchBooks(query);
+  }
 </script>
 
 <header class="navbar">
@@ -158,21 +128,11 @@
             if (e.detail.selectedResult) {
               console.log('base: ' + e.detail.selectedResult);
               console.log('base + href: ' + e.detail.selectedResult.href);
-              navigate(e.detail.selectedResult.href);
+              navigate(e.detail.selectedResult.href, { replace: true });
+              results = [];
             }
           }}
         />
-        <!-- <Link to="/books1/title1/dragon">
-          <div
-            class:selected={$location.pathname === '/books1/title1/dragon' &&
-              !isOpen}
-          >
-            <HeaderGlobalAction
-              aria-label="books1/title1/dragon"
-              icon={CharacterSentenceCase}
-            />
-          </div>
-        </Link> -->
         <Link to="/favorites">
           <div
             class:selected={($favoriteMatch || $favoriteIdFanMatch) && !isOpen}

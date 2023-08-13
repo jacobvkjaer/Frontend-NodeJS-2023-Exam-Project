@@ -25,7 +25,9 @@
   {#if book.categories}
     <div class="aligner">
       <h6>Categories:</h6>
-      <p title={book.categories}>{book.categories}</p>
+      <p title={book.categories.join(', ')}>
+        {truncateWithTrails(book.categories.join(', '), 11)}
+      </p>
     </div>
   {/if}
   {#if book.page_count}
