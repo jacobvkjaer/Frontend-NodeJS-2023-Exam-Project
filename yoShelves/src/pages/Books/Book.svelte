@@ -9,22 +9,37 @@
   import RowCol from '../../components/General/RowAndColumnContainer.svelte';
   import BookHeader from '../../components/Books/BookHeader.svelte';
   import BookTitleSection from '../../components/Books/BookTitleSection.svelte';
+  import ReviewEditSection from '../../components/Reviews/ReviewEditSection.svelte';
 
   import BookImageColumn from '../../components/Books/BookImageColumn.svelte';
   import DeleteBook from '../../components/Books/DeleteBook.svelte';
   import FavoriteBook from '../../components/Favorites/FavoriteBook.svelte';
   import ReviewBook from '../../components/Reviews/ReviewBook.svelte';
+  import { onMount } from 'svelte';
 
   export let id;
   export let search = false;
+  let isEditingReview = false;
 
-  let userId = $user?.user.id;
-  let isAdmin = $user?.user.role === 'admin';
-  $: book = null;
+  $: userId = $user?.user.id;
+  $: isAdmin = $user?.user.role === 'admin';
+  let book;
+  let review;
+  let addReview;
 
-  $: if (id && userId) {
-    fetchBook();
+  $: if (book) {
+    fetchReview();
   }
+
+  // onMount(async () => {
+  //   if (id && userId) {
+  //     book = await fetchBook();
+  //     if (!isAdmin) review = await fetchReview();
+  //   }
+  //   console.debug('Got out of the review function: ', review);
+  // });
+
+  onMount(fetchBook);
 
   async function fetchBook() {
     const endpoint = search
@@ -42,7 +57,7 @@
 
       console.log(data);
 
-      // Checks whether the book with is in db
+      // Checks whether the book with id is in db
       await apiRequest({
         endpoint: `/books/${id}`,
       });
@@ -74,7 +89,25 @@
         console.log(`inside finally - else`);
       }
     }
-    console.log('Book after update:', book);
+    console.debug('Book after update:', book);
+  }
+
+  async function fetchReview() {
+    const endpoint = `/users/${userId}/books/${id}`;
+    console.debug('endpoint: ', endpoint);
+
+    let data;
+
+    try {
+      data = await apiRequest({
+        endpoint,
+      });
+
+      console.debug('review: ', data.review);
+      review = data.review;
+    } catch (e) {
+      console.log(e);
+    }
   }
 </script>
 
@@ -87,11 +120,25 @@
           <BookHeader {book} />
           <Row>
             <BookImageColumn {book} />
-            <BookTitleSection {book} />
+            {#if isEditingReview}
+              <ReviewEditSection
+                {book}
+                review={isEditingReview}
+                bind:isEditingReview
+              />
+            {:else}
+              <BookTitleSection {book} />
+            {/if}
             <Column class="buffer-column" sm={4} md={4} lg={4} xlg={4} max={3}>
               <div class="actions-container">
                 <FavoriteBook {book} />
-                <!-- <ReviewBook {book} /> -->
+                {#if review}
+                  <ReviewBook {review} {book} />
+                  <ReviewBook {review} {book} bind:isEditingReview />
+                {:else}
+                  <ReviewBook {book} />
+                  <ReviewBook {book} bind:isEditingReview />
+                {/if}
                 {#if isAdmin}
                   <DeleteBook {book} />
                 {/if}

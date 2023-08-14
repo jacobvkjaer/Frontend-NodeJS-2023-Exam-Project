@@ -38,16 +38,16 @@
     const endpoint = `/users/${userId}/favorites/${book.id}`;
 
     try {
-      const response = await apiRequest({
+      const data = await apiRequest({
         endpoint,
       });
       console.log(`logging: fetchFavorite`);
-      if (response.status === 404) {
+      if (data.status === 404) {
         console.log('got to 404');
         isFavorite = false;
       }
-      console.log(response);
-      console.log(response.message);
+      console.log(data);
+      console.log(data.message);
       isFavorite = true;
     } catch (e) {
       isFavorite = false;
@@ -130,7 +130,7 @@
           on:click={toggleFavorite}
           icon={Favorite}
         />
-        <p class="p-2">&nbsp;:&ensp;Add to favorites</p>
+        <p class="p-1">&nbsp;:&ensp;Add to favorites</p>
       </div>
     {/if}
   {/if}
@@ -154,8 +154,7 @@
     font-size: 22px;
   }
 
-  .p-1,
-  .p-2 {
-    font-size: 18px;
+  .p-1 {
+    font-size: 17px;
   }
 </style>

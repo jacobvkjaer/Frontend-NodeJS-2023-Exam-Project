@@ -1,14 +1,16 @@
 <script>
   import { Row, Column } from 'carbon-components-svelte';
-  import BookSubtitle from './BookSubtitle.svelte';
   import { Star, StarFilled, StarHalf } from 'carbon-icons-svelte';
+  import ReviewText from './ReviewText.svelte';
+  import ReviewTitle from './ReviewTitle.svelte';
 
-  export let book;
+  export let review;
   // export let isAdmin;
 </script>
 
+<!-- {#if !review} -->
 <Column class="title-column" sm={8} md={8} lg={8} xlg={8} max={10}>
-  {#if book?.subtitle}
+  {#if review?.review_title}
     <div class="title-container">
       <Row class="title-row-1">
         <Column
@@ -19,12 +21,12 @@
           xlg={16}
           max={16}
         >
-          <BookSubtitle subtitle={book.subtitle} />
+          <ReviewTitle reviewTitle={review.review_title} />
         </Column>
       </Row>
     </div>
   {/if}
-  {#if book?.rating}
+  {#if review?.rating}
     <div class="title-container">
       <Row class="title-row">
         <Column
@@ -36,37 +38,39 @@
           max={16}
         >
           <div class="aligner">
-            <h3>Rating</h3>
-            <h2>-</h2>
-            {#each Array(Math.floor(book.rating)).fill() as _}
-              <h4><StarFilled size={20} /></h4>
+            {#each Array(Math.floor(review.rating)).fill() as _}
+              <h5><StarFilled size={16} /></h5>
             {/each}
-            {#if book.rating % 1 >= 0.5}
-              <h4><StarHalf size={20} /></h4>
+            {#if review.rating % 1 >= 0.5}
+              <h5><StarHalf size={16} /></h5>
             {/if}
-            {#each Array(5 - Math.ceil(book.rating)).fill() as _}
-              <h4><Star size={20} /></h4>
+            {#each Array(5 - Math.ceil(review.rating)).fill() as _}
+              <h5><Star size={16} /></h5>
             {/each}
           </div>
         </Column>
       </Row>
     </div>
   {/if}
-  <div class="title-container">
-    <Row class="title-row">
-      <Column class="title-row-column" sm={16} md={16} lg={16} xlg={16} max={16}
-        ><h3>Description:</h3></Column
-      >
-    </Row>
-  </div>
-  <div class="title-container">
-    <Row class="title-row">
-      <Column class="title-row-column" sm={16} md={16} lg={16} xlg={16} max={16}
-        ><p class="book-content">{book?.description}</p></Column
-      >
-    </Row>
-  </div>
+  {#if review?.review_text}
+    <div class="title-container">
+      <Row class="title-row-1">
+        <Column
+          class="title-row-column-1"
+          sm={16}
+          md={16}
+          lg={16}
+          xlg={16}
+          max={16}
+        >
+          <ReviewText reviewText={review.review_text} />
+        </Column>
+      </Row>
+    </div>
+  {/if}
 </Column>
+
+<!-- {/if} -->
 
 <style>
   :global(.title-column) {
@@ -82,6 +86,12 @@
     border-right: 1px solid #523a28;
   }
 
+  :global(
+      .buffer-column.bx--col-sm-4.bx--col-md-4.bx--col-lg-4.bx--col-xlg-4.bx--col-max-3
+    ) {
+    padding: 20px 0 20px 20px;
+  }
+
   .aligner {
     display: flex;
     justify-content: start;
@@ -95,11 +105,5 @@
 
   h2 {
     padding-right: 18px;
-  }
-
-  :global(
-      .buffer-column.bx--col-sm-4.bx--col-md-4.bx--col-lg-4.bx--col-xlg-4.bx--col-max-3
-    ) {
-    padding: 20px 0 20px 20px;
   }
 </style>

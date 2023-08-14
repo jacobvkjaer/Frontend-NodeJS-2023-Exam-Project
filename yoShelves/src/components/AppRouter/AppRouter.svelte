@@ -15,6 +15,7 @@
   import BookFans from '../../pages/Books/BookFans.svelte';
   import Favorites from '../../pages/Favorites/Favorites.svelte';
   import Reviews from '../../pages/Reviews/Reviews.svelte';
+  import Review from '../../pages/Reviews/Review.svelte';
 
   let location = useLocation();
   let navigate = useNavigate();
@@ -108,6 +109,13 @@
         <div>Error</div>
       {/if}
     </PrivateRoute>
+    <PrivateRoute path="/users/:id/reviews" let:params>
+      {#if params.id}
+        <User id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
+    </PrivateRoute>
     <PrivateRoute path="/favorites/:id/fans" let:params>
       {#if params.id}
         <BookFans id={params.id} />
@@ -143,8 +151,17 @@
         <div>Error: Email parameter is missing.</div>
       {/if}
     </Route>
+
+    <!-- Reviews -->
     <PrivateRoute path="/reviews">
       <Reviews />
+    </PrivateRoute>
+    <PrivateRoute path="/reviews/:id" let:params>
+      {#if params.id}
+        <Review id={params.id} />
+      {:else}
+        <div>Error</div>
+      {/if}
     </PrivateRoute>
 
     <!-- Favorites -->

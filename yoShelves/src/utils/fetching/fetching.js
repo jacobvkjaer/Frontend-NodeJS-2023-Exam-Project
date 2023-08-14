@@ -19,6 +19,7 @@ export async function apiRequest({
   try {
     const url = `${baseURL}${endpoint}`;
 
+    console.debug(`apiRequest - url: `, url);
     const response = await fetch(url, {
       method,
       headers: { ...defaultHeaders, ...headers },
@@ -28,8 +29,8 @@ export async function apiRequest({
 
     // Logging for testing purposes
     const data = await response.json();
-    console.log(`reponse: apiRequest`);
-    console.log(data.message);
+    console.debug(`apiRequest - data: `, data);
+    console.debug(`apiRequest - data.message: `, data.message);
 
     if (!response.ok) {
       let errorMsg = data.message || `HTTP error! status: ${response.status}`;
